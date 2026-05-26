@@ -15,9 +15,6 @@
 package config
 
 import (
-	"fmt"
-
-	"github.com/olric-data/olric/internal/ramblock"
 	"github.com/olric-data/olric/pkg/storage"
 )
 
@@ -38,54 +35,15 @@ type Engine struct {
 // NewEngine initializes Engine with sane defaults.
 // Olric will set its own storage engine implementation and related configuration,
 // if there is no other engine.
-func NewEngine() *Engine {
-	return &Engine{
-		Config: make(map[string]interface{}),
-	}
-}
+func NewEngine() *Engine { _ = "STUB: not implemented"; return nil }
 
 // Validate finds errors in the current configuration.
-func (s *Engine) Validate() error {
-	if s.Config == nil {
-		s.Config = make(map[string]interface{})
-	}
-	return nil
-}
+func (s *Engine) Validate() error { _ = "STUB: not implemented"; return nil }
 
 // Sanitize sets default values to empty configuration variables, if it's possible.
-func (s *Engine) Sanitize() error {
-	if s.Name == "" {
-		s.Name = DefaultStorageEngine
-	}
+func (s *Engine) Sanitize() error { _ = "STUB: not implemented"; return nil }
 
-	// Backward compatibility: accept the old name "kvstore"
-	if s.Name == "kvstore" {
-		s.Name = DefaultStorageEngine
-	}
-
-	if s.Implementation == nil {
-		switch s.Name {
-		case DefaultStorageEngine:
-			cfg := ramblock.DefaultConfig().ToMap()
-			for key, value := range cfg {
-				_, ok := s.Config[key]
-				if !ok {
-					s.Config[key] = value
-				}
-			}
-			kv, err := ramblock.New(storage.NewConfig(s.Config))
-			if err != nil {
-				return err
-			}
-			s.Implementation = kv
-		default:
-			return fmt.Errorf("unknown storage engine: %s", s.Name)
-		}
-	} else {
-		s.Name = s.Implementation.Name()
-	}
-	return nil
-}
+// Backward compatibility: accept the old name "kvstore"
 
 // Interface guard
 var _ IConfig = (*Engine)(nil)

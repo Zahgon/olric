@@ -69,50 +69,22 @@ type LockContext interface {
 type PutOption func(*dmap.PutConfig)
 
 // EX sets the specified expire time, in seconds.
-func EX(ex time.Duration) PutOption {
-	return func(cfg *dmap.PutConfig) {
-		cfg.HasEX = true
-		cfg.EX = ex
-	}
-}
+func EX(ex time.Duration) PutOption { _ = "STUB: not implemented"; return *new(PutOption) }
 
 // PX sets the specified expire time, in milliseconds.
-func PX(px time.Duration) PutOption {
-	return func(cfg *dmap.PutConfig) {
-		cfg.HasPX = true
-		cfg.PX = px
-	}
-}
+func PX(px time.Duration) PutOption { _ = "STUB: not implemented"; return *new(PutOption) }
 
 // EXAT sets the specified Unix time at which the key will expire, in seconds.
-func EXAT(exat time.Duration) PutOption {
-	return func(cfg *dmap.PutConfig) {
-		cfg.HasEXAT = true
-		cfg.EXAT = exat
-	}
-}
+func EXAT(exat time.Duration) PutOption { _ = "STUB: not implemented"; return *new(PutOption) }
 
 // PXAT sets the specified Unix time at which the key will expire, in milliseconds.
-func PXAT(pxat time.Duration) PutOption {
-	return func(cfg *dmap.PutConfig) {
-		cfg.HasPXAT = true
-		cfg.PXAT = pxat
-	}
-}
+func PXAT(pxat time.Duration) PutOption { _ = "STUB: not implemented"; return *new(PutOption) }
 
 // NX only sets the key if it does not already exist.
-func NX() PutOption {
-	return func(cfg *dmap.PutConfig) {
-		cfg.HasNX = true
-	}
-}
+func NX() PutOption { _ = "STUB: not implemented"; return *new(PutOption) }
 
 // XX only sets the key if it already exists.
-func XX() PutOption {
-	return func(cfg *dmap.PutConfig) {
-		cfg.HasXX = true
-	}
-}
+func XX() PutOption { _ = "STUB: not implemented"; return *new(PutOption) }
 
 type dmapConfig struct {
 	storageEntryImplementation func() storage.Entry
@@ -123,9 +95,8 @@ type DMapOption func(*dmapConfig)
 
 // StorageEntryImplementation sets and encoder/decoder implementation for your choice of storage engine.
 func StorageEntryImplementation(e func() storage.Entry) DMapOption {
-	return func(cfg *dmapConfig) {
-		cfg.storageEntryImplementation = e
-	}
+	_ = "STUB: not implemented"
+	return *new(DMapOption)
 }
 
 // ScanOption is a function for defining options to control behavior of the SCAN command.
@@ -135,20 +106,10 @@ type ScanOption func(*dmap.ScanConfig)
 // retrieve elements from the distributed map. This is just a hint for the implementation,
 // however generally speaking this is what you could expect most of the time from the implementation.
 // The default value is 10.
-func Count(c int) ScanOption {
-	return func(cfg *dmap.ScanConfig) {
-		cfg.HasCount = true
-		cfg.Count = c
-	}
-}
+func Count(c int) ScanOption { _ = "STUB: not implemented"; return *new(ScanOption) }
 
 // Match is used for using regular expressions on keys. See https://pkg.go.dev/regexp
-func Match(s string) ScanOption {
-	return func(cfg *dmap.ScanConfig) {
-		cfg.HasMatch = true
-		cfg.Match = s
-	}
-}
+func Match(s string) ScanOption { _ = "STUB: not implemented"; return *new(ScanOption) }
 
 // DMap defines methods to access and manipulate distributed maps.
 type DMap interface {
@@ -247,9 +208,8 @@ type PipelineOption func(pipeline *DMapPipeline)
 
 // PipelineConcurrency is a PipelineOption controlling the number of concurrent goroutines.
 func PipelineConcurrency(concurrency int) PipelineOption {
-	return func(dp *DMapPipeline) {
-		dp.concurrency = concurrency
-	}
+	_ = "STUB: not implemented"
+	return *new(PipelineOption)
 }
 
 type statsConfig struct {
@@ -260,22 +220,14 @@ type statsConfig struct {
 type StatsOption func(*statsConfig)
 
 // CollectRuntime is a StatsOption for collecting Go runtime statistics from a cluster member.
-func CollectRuntime() StatsOption {
-	return func(cfg *statsConfig) {
-		cfg.CollectRuntime = true
-	}
-}
+func CollectRuntime() StatsOption { _ = "STUB: not implemented"; return *new(StatsOption) }
 
 type pubsubConfig struct {
 	Address string
 }
 
 // ToAddress is a PubSubOption for using a specific cluster member to publish messages to a channel.
-func ToAddress(addr string) PubSubOption {
-	return func(cfg *pubsubConfig) {
-		cfg.Address = addr
-	}
-}
+func ToAddress(addr string) PubSubOption { _ = "STUB: not implemented"; return *new(PubSubOption) }
 
 // PubSubOption is a function for defining options to control behavior of the Publish-Subscribe service.
 type PubSubOption func(option *pubsubConfig)

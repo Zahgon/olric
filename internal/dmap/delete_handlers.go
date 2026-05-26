@@ -15,55 +15,15 @@
 package dmap
 
 import (
-	"github.com/olric-data/olric/internal/cluster/partitions"
-	"github.com/olric-data/olric/internal/protocol"
 	"github.com/tidwall/redcon"
 )
 
 func (s *Service) delCommandHandler(conn redcon.Conn, cmd redcon.Command) {
-	delCmd, err := protocol.ParseDelCommand(cmd)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-	dm, err := s.getOrCreateDMap(delCmd.DMap)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	count, err := dm.deleteKeys(s.ctx, delCmd.Keys...)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	conn.WriteInt(count)
+	_ = "STUB: not implemented"
+	return
 }
 
 func (s *Service) delEntryCommandHandler(conn redcon.Conn, cmd redcon.Command) {
-	delCmd, err := protocol.ParseDelEntryCommand(cmd)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-	dm, err := s.getOrCreateDMap(delCmd.Del.DMap)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	var kind = partitions.PRIMARY
-	if delCmd.Replica {
-		kind = partitions.BACKUP
-	}
-	for _, key := range delCmd.Del.Keys {
-		err = dm.deleteFromFragment(key, kind)
-		if err != nil {
-			protocol.WriteError(conn, err)
-			return
-		}
-	}
-
-	conn.WriteInt(len(delCmd.Del.Keys))
+	_ = "STUB: not implemented"
+	return
 }

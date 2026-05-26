@@ -34,14 +34,4 @@ type env struct {
 	fragment  *fragment
 }
 
-func newEnv(ctx context.Context) *env {
-	if ctx == nil {
-		ctx = context.Background()
-	}
-	return &env{
-		ctx:       ctx,
-		putConfig: &PutConfig{},
-		timestamp: time.Now().UnixNano(),
-		kind:      partitions.PRIMARY,
-	}
-}
+func newEnv(ctx context.Context) *env { _ = "STUB: not implemented"; return nil }

@@ -20,7 +20,6 @@ import (
 
 	"github.com/olric-data/olric/internal/cluster/routingtable"
 	"github.com/olric-data/olric/internal/environment"
-	"github.com/olric-data/olric/internal/protocol"
 	"github.com/olric-data/olric/internal/server"
 	"github.com/olric-data/olric/internal/service"
 	"github.com/olric-data/olric/internal/stats"
@@ -54,63 +53,19 @@ type Service struct {
 	cancel context.CancelFunc
 }
 
-func (s *Service) RegisterHandlers() {
-	s.server.ServeMux().HandleFunc(protocol.PubSub.Subscribe, s.subscribeCommandHandler)
-	s.server.ServeMux().HandleFunc(protocol.PubSub.PSubscribe, s.psubscribeCommandHandler)
-	s.server.ServeMux().HandleFunc(protocol.PubSub.Publish, s.publishCommandHandler)
-	s.server.ServeMux().HandleFunc(protocol.PubSub.PublishInternal, s.publishInternalCommandHandler)
-	s.server.ServeMux().HandleFunc(protocol.PubSub.PubSubChannels, s.pubsubChannelsCommandHandler)
-	s.server.ServeMux().HandleFunc(protocol.PubSub.PubSubNumpat, s.pubsubNumpatCommandHandler)
-	s.server.ServeMux().HandleFunc(protocol.PubSub.PubSubNumsub, s.pubsubNumsubCommandHandler)
-
-}
+func (s *Service) RegisterHandlers() { _ = "STUB: not implemented"; return }
 
 func NewService(e *environment.Environment) (service.Service, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	ps := &PubSub{
-		unsubscribeCallback: func() {
-			CurrentSubscribers.Decrease(1)
-		},
-		punsubscribeCallback: func() {
-			CurrentPSubscribers.Decrease(1)
-		},
-	}
-	s := &Service{
-		log:    e.Get("logger").(*flog.Logger),
-		rt:     e.Get("routingtable").(*routingtable.RoutingTable),
-		server: e.Get("server").(*server.Server),
-		client: e.Get("client").(*server.Client),
-		pubsub: ps,
-		ctx:    ctx,
-		cancel: cancel,
-	}
-	s.RegisterHandlers()
-	return s, nil
+	_ = "STUB: not implemented"
+	return *new(service.Service), nil
 }
 
 func (s *Service) Start() error {
+	_ = "STUB: not implemented"
 	// dummy implementation
 	return nil
 }
 
-func (s *Service) Shutdown(ctx context.Context) error {
-	s.cancel()
-	done := make(chan struct{})
-
-	go func() {
-		s.wg.Wait()
-		close(done)
-	}()
-
-	select {
-	case <-ctx.Done():
-		err := ctx.Err()
-		if err != nil {
-			return err
-		}
-	case <-done:
-	}
-	return nil
-}
+func (s *Service) Shutdown(ctx context.Context) error { _ = "STUB: not implemented"; return nil }
 
 var _ service.Service = (*Service)(nil)

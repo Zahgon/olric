@@ -15,31 +15,11 @@
 package olric
 
 import (
-	"errors"
-
-	"github.com/olric-data/olric/internal/protocol"
-	"github.com/olric-data/olric/internal/server"
 	"github.com/tidwall/redcon"
 )
 
 // authCommandHandler handles authentication requests sent by clients and verifies the provided password for access.
 func (db *Olric) authCommandHandler(conn redcon.Conn, cmd redcon.Command) {
-	authCmd, err := protocol.ParseAuthCommand(cmd)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	if !db.config.Authentication.Enabled() {
-		protocol.WriteError(conn, errors.New("AUTH <password> called without any password configured for the default user. Are you sure your configuration is correct?"))
-		return
-	}
-
-	if authCmd.Password == db.config.Authentication.Password {
-		ctx := conn.Context().(*server.ConnContext)
-		ctx.SetAuthenticated(true)
-		conn.WriteString(protocol.StatusOK)
-		return
-	}
-	protocol.WriteError(conn, ErrWrongPass)
+	_ = "STUB: not implemented"
+	return
 }

@@ -22,13 +22,6 @@ import (
 // Expire updates the expiry for the given key. It returns ErrKeyNotFound if the
 // DB does not contain the key. It's thread-safe.
 func (dm *DMap) Expire(ctx context.Context, key string, timeout time.Duration) error {
-	pc := &PutConfig{
-		OnlyUpdateTTL: true,
-	}
-	e := newEnv(ctx)
-	e.putConfig = pc
-	e.dmap = dm.name
-	e.key = key
-	e.timeout = timeout
-	return dm.put(e)
+	_ = "STUB: not implemented"
+	return nil
 }

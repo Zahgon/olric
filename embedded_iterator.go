@@ -18,7 +18,6 @@ import (
 	"sync"
 
 	"github.com/olric-data/olric/internal/dmap"
-	"github.com/olric-data/olric/internal/protocol"
 )
 
 // EmbeddedIterator implements distributed query on DMaps.
@@ -30,68 +29,18 @@ type EmbeddedIterator struct {
 	clusterIterator *ClusterIterator
 }
 
-func (e *EmbeddedIterator) scanOnOwners() error {
-	owners := e.clusterIterator.getOwners()
+func (e *EmbeddedIterator) scanOnOwners() error { _ = "STUB: not implemented"; return nil }
 
-	for idx, owner := range owners {
-		cursor := e.clusterIterator.loadCursor(owner)
+// Build a scan command here
 
-		if e.client.db.rt.This().String() == owner {
-			keys, newCursor, err := e.dm.Scan(e.clusterIterator.partID, cursor, e.clusterIterator.config)
-			if err != nil {
-				return err
-			}
-			e.clusterIterator.updateIterator(keys, newCursor, owner)
-			if newCursor == 0 {
-				e.clusterIterator.removeScannedOwner(idx)
-			}
-			continue
-		}
-
-		// Build a scan command here
-		s := protocol.NewScan(e.clusterIterator.partID, e.clusterIterator.dm.Name(), cursor)
-		if e.clusterIterator.config.HasCount {
-			s.SetCount(e.clusterIterator.config.Count)
-		}
-		if e.clusterIterator.config.HasMatch {
-			s.SetMatch(e.clusterIterator.config.Match)
-		}
-		if e.clusterIterator.config.Replica {
-			s.SetReplica()
-		}
-
-		scanCmd := s.Command(e.clusterIterator.ctx)
-		// Fetch a Redis client for the given owner.
-		rc := e.clusterIterator.clusterClient.client.Get(owner)
-		err := rc.Process(e.clusterIterator.ctx, scanCmd)
-		if err != nil {
-			return err
-		}
-
-		keys, newCursor, err := scanCmd.Result()
-		if err != nil {
-			return err
-		}
-		e.clusterIterator.updateIterator(keys, newCursor, owner)
-		if newCursor == 0 {
-			e.clusterIterator.removeScannedOwner(idx)
-		}
-	}
-	return nil
-}
+// Fetch a Redis client for the given owner.
 
 // Next returns true if there is more key in the iterator implementation.
 // Otherwise, it returns false.
-func (e *EmbeddedIterator) Next() bool {
-	return e.clusterIterator.Next()
-}
+func (e *EmbeddedIterator) Next() bool { _ = "STUB: not implemented"; return false }
 
 // Key returns a key name from the distributed map.
-func (e *EmbeddedIterator) Key() string {
-	return e.clusterIterator.Key()
-}
+func (e *EmbeddedIterator) Key() string { _ = "STUB: not implemented"; return "" }
 
 // Close stops the iteration and releases allocated resources.
-func (e *EmbeddedIterator) Close() {
-	e.clusterIterator.Close()
-}
+func (e *EmbeddedIterator) Close() { _ = "STUB: not implemented"; return }

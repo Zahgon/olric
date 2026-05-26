@@ -15,82 +15,31 @@
 package dmap
 
 import (
-	"strings"
-	"time"
-
 	"github.com/olric-data/olric/internal/cluster/partitions"
 )
 
 func wipeOutFragment(part *partitions.Partition, name string, f *fragment) error {
+	_ = "STUB: not implemented"
 	// Stop background services if there is any.
-	err := f.Close()
-	if err != nil {
-		return err
-	}
-	// Destroy data on-disk or in-memory.
-	err = f.Destroy()
-	if err != nil {
-		return err
-	}
-	// Delete the fragment from partition.
-	part.Map().Delete(name)
 	return nil
 }
 
-func (s *Service) janitor(part *partitions.Partition) {
-	part.Map().Range(func(name, tmp interface{}) bool {
-		if !strings.HasPrefix(name.(string), "dmap.") {
-			// This fragment belongs to a different data structure.
-			return true
-		}
+// Destroy data on-disk or in-memory.
 
-		f := tmp.(*fragment)
-		f.Lock()
-		defer f.Unlock()
+// Delete the fragment from partition.
 
-		if f.storage.Stats().Length != 0 {
-			// It's not empty. Continue scanning.
-			return true
-		}
+func (s *Service) janitor(part *partitions.Partition) { _ = "STUB: not implemented"; return }
 
-		err := wipeOutFragment(part, name.(string), f)
-		if err != nil {
-			s.log.V(3).Printf("[ERROR] Failed to delete empty DMap fragment (kind: %s): %s on PartID: %d",
-				part.Kind(), name, part.ID())
-			// continue scanning
-			return true
-		}
+// This fragment belongs to a different data structure.
 
-		s.log.V(4).Printf("[INFO] Empty DMap fragment (kind: %s) has been deleted: %s on PartID: %d",
-			part.Kind(), name, part.ID())
-		return true
-	})
-}
+// It's not empty. Continue scanning.
 
-func (s *Service) deleteEmptyFragments() {
-	for partID := uint64(0); partID < s.config.PartitionCount; partID++ {
-		// Clean stale DMap fragments on partition table
-		part := s.primary.PartitionByID(partID)
-		s.janitor(part)
+// continue scanning
 
-		// Clean stale DMap fragments on backup partition table
-		backup := s.backup.PartitionByID(partID)
-		s.janitor(backup)
-	}
-}
+func (s *Service) deleteEmptyFragments() { _ = "STUB: not implemented"; return }
 
-func (s *Service) janitorWorker() {
-	defer s.wg.Done()
-	timer := time.NewTimer(s.config.DMaps.CheckEmptyFragmentsInterval)
-	defer timer.Stop()
+// Clean stale DMap fragments on partition table
 
-	for {
-		timer.Reset(s.config.DMaps.CheckEmptyFragmentsInterval)
-		select {
-		case <-timer.C:
-			s.deleteEmptyFragments()
-		case <-s.ctx.Done():
-			return
-		}
-	}
-}
+// Clean stale DMap fragments on backup partition table
+
+func (s *Service) janitorWorker() { _ = "STUB: not implemented"; return }

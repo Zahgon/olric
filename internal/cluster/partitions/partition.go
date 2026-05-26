@@ -31,60 +31,33 @@ type Partition struct {
 	owners atomic.Value
 }
 
-func (p *Partition) Kind() Kind {
-	return p.kind
-}
+func (p *Partition) Kind() Kind { _ = "STUB: not implemented"; return *new(Kind) }
 
-func (p *Partition) ID() uint64 {
-	return p.id
-}
+func (p *Partition) ID() uint64 { _ = "STUB: not implemented"; return 0 }
 
 func (p *Partition) Map() *sync.Map {
-	return p.m
+	_ = "STUB: not implemented"
+
+	// Owner returns partition Owner. It's not thread-safe.
+	return nil
 }
 
-// Owner returns partition Owner. It's not thread-safe.
 func (p *Partition) Owner() discovery.Member {
-	if p.Kind() == BACKUP {
-		// programming error. it cannot occur at production!
-		panic("cannot call this if backup is true")
-	}
-	owners := p.owners.Load().([]discovery.Member)
-	if len(owners) == 0 {
-		panic("owners list cannot be empty")
-	}
-	return owners[len(owners)-1]
+	_ = "STUB: not implemented"
+	return *
+
+	// programming error. it cannot occur at production!
+	new(discovery.Member)
 }
 
 // OwnerCount returns the current Owner count of a partition.
-func (p *Partition) OwnerCount() int {
-	owners := p.owners.Load()
-	if owners == nil {
-		return 0
-	}
-	return len(owners.([]discovery.Member))
-}
+func (p *Partition) OwnerCount() int { _ = "STUB: not implemented"; return 0 }
 
 // Owners loads the partition owners from atomic.Value and returns.
-func (p *Partition) Owners() []discovery.Member {
-	owners := p.owners.Load()
-	if owners == nil {
-		return []discovery.Member{}
-	}
-	return owners.([]discovery.Member)
-}
+func (p *Partition) Owners() []discovery.Member { _ = "STUB: not implemented"; return nil }
 
-func (p *Partition) SetOwners(owners []discovery.Member) {
-	p.owners.Store(owners)
-}
+func (p *Partition) SetOwners(owners []discovery.Member) { _ = "STUB: not implemented"; return }
 
-func (p *Partition) Length() int {
-	var length int
-	p.Map().Range(func(_, tmp interface{}) bool {
-		u := tmp.(Fragment)
-		length += u.Stats().Length
-		// Continue scanning.
-		return true
-	})
-	return length
-}
+func (p *Partition) Length() int { _ = "STUB: not implemented"; return 0 }
+
+// Continue scanning.

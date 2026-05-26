@@ -16,41 +16,18 @@ package olric
 
 import (
 	"context"
-	"strings"
 
-	"github.com/olric-data/olric/internal/protocol"
 	"github.com/tidwall/redcon"
 )
 
 const DefaultPingResponse = "PONG"
 
 func (db *Olric) ping(ctx context.Context, addr, message string) ([]byte, error) {
-	message = strings.TrimSpace(message)
-
-	pingCmd := protocol.NewPing()
-	if message != "" {
-		pingCmd = pingCmd.SetMessage(message)
-	}
-
-	cmd := pingCmd.Command(ctx)
-	rc := db.client.Get(addr)
-	err := rc.Process(ctx, cmd)
-	if err != nil {
-		return nil, err
-	}
-	return cmd.Bytes()
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (db *Olric) pingCommandHandler(conn redcon.Conn, cmd redcon.Command) {
-	pingCmd, err := protocol.ParsePingCommand(cmd)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	if pingCmd.Message != "" {
-		conn.WriteString(pingCmd.Message)
-		return
-	}
-	conn.WriteString(DefaultPingResponse)
+	_ = "STUB: not implemented"
+	return
 }

@@ -29,31 +29,20 @@ package olric
 
 import (
 	"context"
-	"fmt"
-	"net"
-	"runtime"
-	"strconv"
-	"strings"
 	"sync"
-	"time"
 
-	"github.com/hashicorp/logutils"
 	"github.com/olric-data/olric/config"
 	"github.com/olric-data/olric/hasher"
-	"github.com/olric-data/olric/internal/checkpoint"
 	"github.com/olric-data/olric/internal/cluster/balancer"
 	"github.com/olric-data/olric/internal/cluster/partitions"
 	"github.com/olric-data/olric/internal/cluster/routingtable"
 	"github.com/olric-data/olric/internal/dmap"
 	"github.com/olric-data/olric/internal/environment"
-	"github.com/olric-data/olric/internal/locker"
-	"github.com/olric-data/olric/internal/protocol"
 	"github.com/olric-data/olric/internal/pubsub"
 	"github.com/olric-data/olric/internal/server"
 	"github.com/olric-data/olric/pkg/flog"
 	"github.com/pkg/errors"
 	"github.com/tidwall/redcon"
-	"golang.org/x/sync/errgroup"
 )
 
 // ReleaseVersion is the current stable version of Olric
@@ -138,361 +127,75 @@ type Olric struct {
 }
 
 func prepareConfig(c *config.Config) (*config.Config, error) {
-	if c == nil {
-		return nil, fmt.Errorf("config cannot be nil")
-	}
-
-	err := c.Sanitize()
-	if err != nil {
-		return nil, err
-	}
-
-	err = c.Validate()
-	if err != nil {
-		return nil, err
-	}
-
-	err = c.SetupNetworkConfig()
-	if err != nil {
-		return nil, err
-	}
-	c.MemberlistConfig.Name = net.JoinHostPort(c.BindAddr,
-		strconv.Itoa(c.BindPort))
-
-	filter := &logutils.LevelFilter{
-		Levels:   []logutils.LogLevel{"DEBUG", "WARN", "ERROR", "INFO"},
-		MinLevel: logutils.LogLevel(strings.ToUpper(c.LogLevel)),
-		Writer:   c.Logger.Writer(),
-	}
-	c.Logger.SetOutput(filter)
-
-	return c, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
-func initializeServices(db *Olric) error {
-	db.rt = routingtable.New(db.env)
-	db.env.Set("routingtable", db.rt)
+func initializeServices(db *Olric) error { _ = "STUB: not implemented"; return nil }
 
-	db.balancer = balancer.New(db.env)
-
-	// Add Services
-	dt, err := pubsub.NewService(db.env)
-	if err != nil {
-		return err
-	}
-	db.pubsub = dt.(*pubsub.Service)
-
-	dm, err := dmap.NewService(db.env)
-	if err != nil {
-		return err
-	}
-	db.dmap = dm.(*dmap.Service)
-
-	return nil
-}
+// Add Services
 
 // New creates a new Olric instance, otherwise returns an error.
-func New(c *config.Config) (*Olric, error) {
-	var err error
-	c, err = prepareConfig(c)
-	if err != nil {
-		return nil, err
-	}
+func New(c *config.Config) (*Olric, error) { _ = "STUB: not implemented"; return nil, nil }
 
-	e := environment.New()
-	e.Set("config", c)
+// Set the hash function. Olric distributes keys over partitions by hashing.
 
-	// Set the hash function. Olric distributes keys over partitions by hashing.
-	partitions.SetHashFunc(c.Hasher)
-
-	flogger := flog.New(c.Logger)
-	flogger.SetLevel(c.LogVerbosity)
-	if c.LogLevel == "DEBUG" {
-		flogger.ShowLineNumber(1)
-	}
-	e.Set("logger", flogger)
-
-	if c.Authentication.Enabled() {
-		c.Client.Authentication = c.Authentication
-	}
-	client := server.NewClient(c.Client)
-	e.Set("client", client)
-	e.Set("primary", partitions.New(c.PartitionCount, partitions.PRIMARY))
-	e.Set("backup", partitions.New(c.PartitionCount, partitions.BACKUP))
-	e.Set("locker", locker.New())
-	ctx, cancel := context.WithCancel(context.Background())
-	db := &Olric{
-		name:     c.MemberlistConfig.Name,
-		env:      e,
-		log:      flogger,
-		config:   c,
-		hashFunc: c.Hasher,
-		client:   client,
-		primary:  e.Get("primary").(*partitions.Partitions),
-		backup:   e.Get("backup").(*partitions.Partitions),
-		started:  c.Started,
-		ctx:      ctx,
-		cancel:   cancel,
-	}
-
-	// Create a Redcon server instance
-	rc := &server.Config{
-		BindAddr:        c.BindAddr,
-		BindPort:        c.BindPort,
-		KeepAlivePeriod: c.KeepAlivePeriod,
-		RequireAuth:     c.Authentication.Enabled(),
-	}
-	srv := server.New(rc, flogger)
-	srv.SetPreConditionFunc(db.preconditionFunc)
-
-	db.server = srv
-	e.Set("server", srv)
-
-	err = initializeServices(db)
-	if err != nil {
-		return nil, err
-	}
-
-	db.registerCommandHandlers()
-	registerErrors()
-
-	return db, nil
-}
+// Create a Redcon server instance
 
 func (db *Olric) preconditionFunc(conn redcon.Conn, _ redcon.Command) bool {
-	err := db.isOperable()
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return false
-	}
-	return true
+	_ = "STUB: not implemented"
+	return false
 }
 
-func (db *Olric) registerCommandHandlers() {
-	db.server.ServeMux().HandleFunc(protocol.Generic.Ping, db.pingCommandHandler)
-	db.server.ServeMux().HandleFunc(protocol.Cluster.RoutingTable, db.clusterRoutingTableCommandHandler)
-	db.server.ServeMux().HandleFunc(protocol.Generic.Stats, db.statsCommandHandler)
-	db.server.ServeMux().HandleFunc(protocol.Cluster.Members, db.clusterMembersCommandHandler)
-	db.server.ServeMux().HandleFunc(protocol.Generic.Auth, db.authCommandHandler)
-}
+func (db *Olric) registerCommandHandlers() { _ = "STUB: not implemented"; return }
 
 // callStartedCallback checks passed checkpoint count and calls the callback
 // function.
-func (db *Olric) callStartedCallback() {
-	defer db.wg.Done()
+func (db *Olric) callStartedCallback() { _ = "STUB: not implemented"; return }
 
-	timer := time.NewTimer(10 * time.Millisecond)
-	defer timer.Stop()
-
-	for {
-		timer.Reset(10 * time.Millisecond)
-		select {
-		case <-timer.C:
-			if checkpoint.AllPassed() {
-				if db.started != nil {
-					db.started()
-				}
-				return
-			}
-		case <-db.ctx.Done():
-			return
-		}
-	}
-}
-
-func convertClusterError(err error) error {
-	switch {
-	case errors.Is(err, routingtable.ErrClusterQuorum):
-		return ErrClusterQuorum
-	case errors.Is(err, routingtable.ErrServerGone):
-		return ErrServerGone
-	case errors.Is(err, routingtable.ErrOperationTimeout):
-		return ErrOperationTimeout
-	default:
-		return err
-	}
-}
+func convertClusterError(err error) error { _ = "STUB: not implemented"; return nil }
 
 // isOperable controls bootstrapping status and cluster quorum to prevent split-brain syndrome.
-func (db *Olric) isOperable() error {
-	if err := db.rt.CheckMemberCountQuorum(); err != nil {
-		return convertClusterError(err)
-	}
-	// An Olric node has to be bootstrapped to function properly.
-	return db.rt.CheckBootstrap()
-}
+func (db *Olric) isOperable() error { _ = "STUB: not implemented"; return nil }
+
+// An Olric node has to be bootstrapped to function properly.
 
 // Start starts background servers and joins the cluster. You still must call Shutdown
 // method if Start function returns an early error.
-func (db *Olric) Start() error {
-	db.log.V(1).Printf("[INFO] Olric %s on %s/%s %s", ReleaseVersion, runtime.GOOS, runtime.GOARCH, runtime.Version())
+func (db *Olric) Start() error { _ = "STUB: not implemented"; return nil }
 
-	// This error group is responsible to run the TCP server at background and report errors.
-	errGr, ctx := errgroup.WithContext(context.Background())
-	errGr.Go(func() error {
-		return db.server.ListenAndServe()
-	})
+// This error group is responsible to run the TCP server at background and report errors.
 
-	select {
-	case <-db.server.StartedCtx.Done():
-		// TCP server has been started
-	case <-ctx.Done():
-		// TCP server could not be started due to an error. There is no need to run
-		// Olric.Shutdown here because we could not start anything.
-		return errGr.Wait()
-	}
+// TCP server has been started
 
-	// Balancer works periodically to balance partition data across the cluster.
-	if err := db.balancer.Start(); err != nil {
-		if err != nil {
-			db.log.V(2).Printf("[ERROR] Failed to run the balancer subsystem: %v", err)
-		}
-		return err
-	}
+// TCP server could not be started due to an error. There is no need to run
+// Olric.Shutdown here because we could not start anything.
 
-	// First, we need to join the cluster. Then, the routing table has been started.
-	if err := db.rt.Join(); err != nil {
-		if err != nil {
-			db.log.V(2).Printf("[ERROR] Failed to join the Olric cluster: %v", err)
-		}
-		return err
-	}
-	// Start routing table service and member discovery subsystem.
-	if err := db.rt.Start(); err != nil {
-		if err != nil {
-			db.log.V(2).Printf("[ERROR] Failed to run the routing table subsystem: %v", err)
-		}
-		return err
-	}
+// Balancer works periodically to balance partition data across the cluster.
 
-	// Start publish-subscribe service
-	if err := db.pubsub.Start(); err != nil {
-		if err != nil {
-			db.log.V(2).Printf("[ERROR] Failed to run the Publish-Subscribe service: %v", err)
-		}
-		return err
-	}
+// First, we need to join the cluster. Then, the routing table has been started.
 
-	// Start distributed map service
-	if err := db.dmap.Start(); err != nil {
-		if err != nil {
-			db.log.V(2).Printf("[ERROR] Failed to run the Distributed Map service: %v", err)
-		}
-		return err
-	}
+// Start routing table service and member discovery subsystem.
 
-	// Warn the user about his/her choice of configuration
-	if db.config.ReplicationMode == config.AsyncReplicationMode && db.config.WriteQuorum > 1 {
-		db.log.V(2).
-			Printf("[WARN] Olric is running in async replication mode. WriteQuorum (%d) is ineffective",
-				db.config.WriteQuorum)
-	}
+// Start publish-subscribe service
 
-	if db.started != nil {
-		db.wg.Add(1)
-		go db.callStartedCallback()
-	}
+// Start distributed map service
 
-	db.log.V(2).Printf("[INFO] Node name in the cluster: %s",
-		db.name)
-	if db.config.Interface != "" {
-		db.log.V(2).Printf("[INFO] Olric uses interface: %s",
-			db.config.Interface)
-	}
-	db.log.V(2).Printf("[INFO] Olric bindAddr: %s, bindPort: %d",
-		db.config.BindAddr, db.config.BindPort)
-	db.log.V(2).Printf("[INFO] Replication count is %d", db.config.ReplicaCount)
+// Warn the user about his/her choice of configuration
 
-	// Wait for the TCP server.
-	return errGr.Wait()
-}
+// Wait for the TCP server.
 
 // Shutdown stops background servers and leaves the cluster.
-func (db *Olric) Shutdown(ctx context.Context) error {
-	select {
-	case <-db.ctx.Done():
-		// Shutdown only once.
-		return nil
-	default:
-	}
+func (db *Olric) Shutdown(ctx context.Context) error { _ = "STUB: not implemented"; return nil }
 
-	db.cancel()
+// Shutdown only once.
 
-	var latestError error
+// Shutdown Redcon server
 
-	if err := db.pubsub.Shutdown(ctx); err != nil {
-		db.log.V(2).Printf("[ERROR] Failed to shutdown PubSub service: %v", err)
-		latestError = err
-	}
+// db.name will be shown as empty string, if the program is killed before
+// bootstrapping.
 
-	if err := db.dmap.Shutdown(ctx); err != nil {
-		db.log.V(2).Printf("[ERROR] Failed to shutdown DMap service: %v", err)
-		latestError = err
-	}
-
-	if err := db.balancer.Shutdown(ctx); err != nil {
-		db.log.V(2).Printf("[ERROR] Failed to shutdown balancer service: %v", err)
-		latestError = err
-	}
-
-	if err := db.rt.Shutdown(ctx); err != nil {
-		db.log.V(2).Printf("[ERROR] Failed to shutdown routing table service: %v", err)
-		latestError = err
-	}
-
-	// Shutdown Redcon server
-	if err := db.server.Shutdown(ctx); err != nil {
-		db.log.V(2).Printf("[ERROR] Failed to shutdown RESP server: %v", err)
-		latestError = err
-	}
-
-	done := make(chan struct{})
-	go func() {
-		defer func() {
-			close(done)
-		}()
-		db.wg.Wait()
-	}()
-
-	select {
-	case <-ctx.Done():
-	case <-done:
-	}
-
-	// db.name will be shown as empty string, if the program is killed before
-	// bootstrapping.
-	db.log.V(2).Printf("[INFO] %s is gone", db.name)
-	return latestError
-}
-
-func convertDMapError(err error) error {
-	switch {
-	case errors.Is(err, dmap.ErrKeyFound):
-		return ErrKeyFound
-	case errors.Is(err, dmap.ErrKeyNotFound):
-		return ErrKeyNotFound
-	case errors.Is(err, dmap.ErrDMapNotFound):
-		return ErrKeyNotFound
-	case errors.Is(err, dmap.ErrLockNotAcquired):
-		return ErrLockNotAcquired
-	case errors.Is(err, dmap.ErrNoSuchLock):
-		return ErrNoSuchLock
-	case errors.Is(err, dmap.ErrReadQuorum):
-		return ErrReadQuorum
-	case errors.Is(err, dmap.ErrWriteQuorum):
-		return ErrWriteQuorum
-	case errors.Is(err, dmap.ErrServerGone):
-		return ErrServerGone
-	case errors.Is(err, dmap.ErrKeyTooLarge):
-		return ErrKeyTooLarge
-	case errors.Is(err, dmap.ErrEntryTooLarge):
-		return ErrEntryTooLarge
-	default:
-		return convertClusterError(err)
-	}
-}
+func convertDMapError(err error) error { _ = "STUB: not implemented"; return nil }
 
 // registerErrors registers application-specific errors with their corresponding prefixes in the error management system.
-func registerErrors() {
-	protocol.SetError("WRONGPASS", ErrWrongPass)
-}
+func registerErrors() { _ = "STUB: not implemented"; return }

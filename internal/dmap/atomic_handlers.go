@@ -15,108 +15,30 @@
 package dmap
 
 import (
-	"strconv"
-
-	"github.com/olric-data/olric/internal/protocol"
 	"github.com/tidwall/redcon"
 )
 
 func (s *Service) incrDecrCommon(cmd, dmap, key string, delta int) (int, error) {
-	dm, err := s.getOrCreateDMap(dmap)
-	if err != nil {
-		return 0, err
-	}
-
-	e := newEnv(s.ctx)
-	e.dmap = dm.name
-	e.key = key
-	return dm.atomicIncrDecr(cmd, e, delta)
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (s *Service) incrCommandHandler(conn redcon.Conn, cmd redcon.Command) {
-	incrCmd, err := protocol.ParseIncrCommand(cmd)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-	latest, err := s.incrDecrCommon(protocol.DMap.Incr, incrCmd.DMap, incrCmd.Key, incrCmd.Delta)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-	conn.WriteInt(latest)
+	_ = "STUB: not implemented"
+	return
 }
 
 func (s *Service) decrCommandHandler(conn redcon.Conn, cmd redcon.Command) {
-	decrCmd, err := protocol.ParseDecrCommand(cmd)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-	latest, err := s.incrDecrCommon(protocol.DMap.Decr, decrCmd.DMap, decrCmd.Key, decrCmd.Delta)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-	conn.WriteInt(latest)
+	_ = "STUB: not implemented"
+	return
 }
 
 func (s *Service) getPutCommandHandler(conn redcon.Conn, cmd redcon.Command) {
-	getPutCmd, err := protocol.ParseGetPutCommand(cmd)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-	dm, err := s.getOrCreateDMap(getPutCmd.DMap)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	e := newEnv(s.ctx)
-	e.dmap = getPutCmd.DMap
-	e.key = getPutCmd.Key
-	e.value = getPutCmd.Value
-	old, err := dm.getPut(e)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	if old == nil {
-		conn.WriteNull()
-		return
-	}
-
-	if getPutCmd.Raw {
-		conn.WriteBulk(old.Encode())
-		return
-	}
-
-	conn.WriteBulk(old.Value())
+	_ = "STUB: not implemented"
+	return
 }
 
 func (s *Service) incrByFloatCommandHandler(conn redcon.Conn, cmd redcon.Command) {
-	incrCmd, err := protocol.ParseIncrByFloatCommand(cmd)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	dm, err := s.getOrCreateDMap(incrCmd.DMap)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	e := newEnv(s.ctx)
-	e.dmap = dm.name
-	e.key = incrCmd.Key
-	latest, err := dm.atomicIncrByFloat(e, incrCmd.Delta)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	conn.WriteBulkString(strconv.FormatFloat(latest, 'f', -1, 64))
+	_ = "STUB: not implemented"
+	return
 }

@@ -15,10 +15,6 @@
 package ramblock
 
 import (
-	"fmt"
-	"io"
-
-	"github.com/olric-data/olric/internal/ramblock/table"
 	"github.com/olric-data/olric/pkg/storage"
 )
 
@@ -26,51 +22,21 @@ type transferIterator struct {
 	storage *RamBlock
 }
 
-func (t *transferIterator) Next() bool {
-	return len(t.storage.tables) != 0
-}
+func (t *transferIterator) Next() bool { _ = "STUB: not implemented"; return false }
 
-func (t *transferIterator) Drop(index int) error {
-	if len(t.storage.tables) == 0 {
-		return fmt.Errorf("there is no table to drop")
-	}
-
-	tb := t.storage.tables[index]
-	t.storage.tables = append(t.storage.tables[:index], t.storage.tables[index+1:]...)
-	delete(t.storage.tablesByCoefficient, tb.Coefficient())
-
-	return nil
-}
+func (t *transferIterator) Drop(index int) error { _ = "STUB: not implemented"; return nil }
 
 func (t *transferIterator) Export() ([]byte, int, error) {
-	for index, t := range t.storage.tables {
-		if t.State() == table.RecycledState {
-			continue
-		}
-
-		data, err := table.Encode(t)
-		if err != nil {
-			return nil, 0, err
-		}
-		return data, index, nil
-	}
-	return nil, 0, io.EOF
+	_ = "STUB: not implemented"
+	return nil, 0, nil
 }
 
 func (rb *RamBlock) Import(data []byte, f func(uint64, storage.Entry) error) error {
-	tb, err := table.Decode(data)
-	if err != nil {
-		return err
-	}
-
-	tb.Range(func(hkey uint64, e storage.Entry) bool {
-		return f(hkey, e) == nil
-	})
-	return err
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (rb *RamBlock) TransferIterator() storage.TransferIterator {
-	return &transferIterator{
-		storage: rb,
-	}
+	_ = "STUB: not implemented"
+	return *new(storage.TransferIterator)
 }

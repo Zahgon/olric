@@ -23,42 +23,28 @@ import (
 
 type ClusterRoutingTable struct{}
 
-func NewClusterRoutingTable() *ClusterRoutingTable {
-	return &ClusterRoutingTable{}
-}
+func NewClusterRoutingTable() *ClusterRoutingTable { _ = "STUB: not implemented"; return nil }
 
 func (c *ClusterRoutingTable) Command(ctx context.Context) *redis.Cmd {
-	var args []interface{}
-	args = append(args, Cluster.RoutingTable)
-	return redis.NewCmd(ctx, args...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ParseClusterRoutingTable(cmd redcon.Command) (*ClusterRoutingTable, error) {
-	if len(cmd.Args) > 1 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	c := NewClusterRoutingTable()
-	return c, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 type ClusterMembers struct{}
 
-func NewClusterMembers() *ClusterMembers {
-	return &ClusterMembers{}
-}
+func NewClusterMembers() *ClusterMembers { _ = "STUB: not implemented"; return nil }
 
 func (c *ClusterMembers) Command(ctx context.Context) *redis.Cmd {
-	var args []interface{}
-	args = append(args, Cluster.Members)
-	return redis.NewCmd(ctx, args...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ParseClusterMembers(cmd redcon.Command) (*ClusterMembers, error) {
-	if len(cmd.Args) > 1 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	c := NewClusterMembers()
-	return c, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }

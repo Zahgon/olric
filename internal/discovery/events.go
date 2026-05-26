@@ -16,47 +16,14 @@ package discovery
 
 import "github.com/hashicorp/memberlist"
 
-func ToClusterEvent(e memberlist.NodeEvent) *ClusterEvent {
-	return &ClusterEvent{
-		Event:    e.Event,
-		NodeName: e.Node.Name,
-		NodeAddr: e.Node.Addr,
-		NodePort: e.Node.Port,
-		NodeMeta: e.Node.Meta,
-	}
-}
+func ToClusterEvent(e memberlist.NodeEvent) *ClusterEvent { _ = "STUB: not implemented"; return nil }
 
-func (d *Discovery) handleEvent(event memberlist.NodeEvent) {
-	d.clusterEventsMtx.RLock()
-	defer d.clusterEventsMtx.RUnlock()
-
-	for _, ch := range d.eventSubscribers {
-		if event.Node.Name == d.member.Name {
-			continue
-		}
-		ch <- ToClusterEvent(event)
-	}
-}
+func (d *Discovery) handleEvent(event memberlist.NodeEvent) { _ = "STUB: not implemented"; return }
 
 // eventLoop awaits for messages from memberlist and broadcasts them to  event listeners.
 func (d *Discovery) eventLoop(eventsCh chan memberlist.NodeEvent) {
-	defer d.wg.Done()
-
-	for {
-		select {
-		case e := <-eventsCh:
-			d.handleEvent(e)
-		case <-d.ctx.Done():
-			return
-		}
-	}
+	_ = "STUB: not implemented"
+	return
 }
 
-func (d *Discovery) SubscribeNodeEvents() chan *ClusterEvent {
-	d.clusterEventsMtx.Lock()
-	defer d.clusterEventsMtx.Unlock()
-
-	ch := make(chan *ClusterEvent, eventChanCapacity)
-	d.eventSubscribers = append(d.eventSubscribers, ch)
-	return ch
-}
+func (d *Discovery) SubscribeNodeEvents() chan *ClusterEvent { _ = "STUB: not implemented"; return nil }

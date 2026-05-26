@@ -15,12 +15,7 @@
 package discovery
 
 import (
-	"encoding/binary"
-	"time"
-
-	"github.com/cespare/xxhash/v2"
 	"github.com/olric-data/olric/config"
-	"github.com/vmihailenco/msgpack/v5"
 )
 
 // Member represents a node in the cluster.
@@ -33,45 +28,28 @@ type Member struct {
 
 // CompareByID returns true if two members denote the same member in the cluster.
 func (m Member) CompareByID(other Member) bool {
+	_ = "STUB: not implemented"
 	// ID variable is calculated by combining member's name and birthdate
-	return m.ID == other.ID
+	return false
 }
 
 // CompareByName returns true if the two members has the same name in the cluster.
 // This function is intended to redirect the requests to the partition owner.
-func (m Member) CompareByName(other Member) bool {
-	return m.NameHash == other.NameHash
-}
+func (m Member) CompareByName(other Member) bool { _ = "STUB: not implemented"; return false }
 
-func (m Member) String() string {
-	return m.Name
-}
+func (m Member) String() string { _ = "STUB: not implemented"; return "" }
 
-func (m Member) Encode() ([]byte, error) {
-	return msgpack.Marshal(m)
-}
+func (m Member) Encode() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
 func NewMemberFromMetadata(metadata []byte) (Member, error) {
-	res := &Member{}
-	err := msgpack.Unmarshal(metadata, res)
-	return *res, err
+	_ = "STUB: not implemented"
+	return *new(Member), nil
 }
 
 func MemberID(name string, birthdate int64) uint64 {
+	_ = "STUB: not implemented"
 	// Calculate member's identity. It's useful to compare hosts.
-	buf := make([]byte, 8+len(name))
-	binary.BigEndian.PutUint64(buf, uint64(birthdate))
-	buf = append(buf, []byte(name)...)
-	return xxhash.Sum64(buf)
+	return 0
 }
 
-func NewMember(c *config.Config) Member {
-	birthdate := time.Now().UnixNano()
-	nameHash := xxhash.Sum64([]byte(c.MemberlistConfig.Name))
-	return Member{
-		Name:      c.MemberlistConfig.Name,
-		NameHash:  nameHash,
-		ID:        MemberID(c.MemberlistConfig.Name, birthdate),
-		Birthdate: birthdate,
-	}
-}
+func NewMember(c *config.Config) Member { _ = "STUB: not implemented"; return *new(Member) }

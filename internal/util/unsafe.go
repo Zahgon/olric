@@ -29,21 +29,8 @@
 
 package util
 
-import (
-	"unsafe"
-)
-
 // BytesToString converts byte slice to string.
-func BytesToString(b []byte) string {
-	return *(*string)(unsafe.Pointer(&b))
-}
+func BytesToString(b []byte) string { _ = "STUB: not implemented"; return "" }
 
 // StringToBytes converts string to byte slice.
-func StringToBytes(s string) []byte {
-	return *(*[]byte)(unsafe.Pointer(
-		&struct {
-			string
-			Cap int
-		}{s, len(s)},
-	))
-}
+func StringToBytes(s string) []byte { _ = "STUB: not implemented"; return nil }

@@ -14,8 +14,6 @@
 
 package loader
 
-import "gopkg.in/yaml.v2"
-
 type server struct {
 	Name                       string  `yaml:"name"`
 	BindAddr                   string  `yaml:"bindAddr"`
@@ -138,10 +136,4 @@ type Loader struct {
 }
 
 // New tries to read Olric configuration from a YAML file.
-func New(data []byte) (*Loader, error) {
-	var lc Loader
-	if err := yaml.Unmarshal(data, &lc); err != nil {
-		return nil, err
-	}
-	return &lc, nil
-}
+func New(data []byte) (*Loader, error) { _ = "STUB: not implemented"; return nil, nil }

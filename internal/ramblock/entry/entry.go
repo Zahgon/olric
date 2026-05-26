@@ -15,8 +15,6 @@
 package entry
 
 import (
-	"encoding/binary"
-
 	"github.com/olric-data/olric/pkg/storage"
 )
 
@@ -35,107 +33,42 @@ type Entry struct {
 
 var _ storage.Entry = (*Entry)(nil)
 
-func New() *Entry {
-	return &Entry{}
-}
+func New() *Entry { _ = "STUB: not implemented"; return nil }
 
-func (e *Entry) SetKey(key string) {
-	e.key = key
-}
+func (e *Entry) SetKey(key string) { _ = "STUB: not implemented"; return }
 
-func (e *Entry) Key() string {
-	return e.key
-}
+func (e *Entry) Key() string { _ = "STUB: not implemented"; return "" }
 
-func (e *Entry) SetValue(value []byte) {
-	e.value = value
-}
+func (e *Entry) SetValue(value []byte) { _ = "STUB: not implemented"; return }
 
-func (e *Entry) Value() []byte {
-	return e.value
-}
+func (e *Entry) Value() []byte { _ = "STUB: not implemented"; return nil }
 
-func (e *Entry) SetTTL(ttl int64) {
-	e.ttl = ttl
-}
+func (e *Entry) SetTTL(ttl int64) { _ = "STUB: not implemented"; return }
 
-func (e *Entry) TTL() int64 {
-	return e.ttl
-}
+func (e *Entry) TTL() int64 { _ = "STUB: not implemented"; return 0 }
 
-func (e *Entry) SetTimestamp(timestamp int64) {
-	e.timestamp = timestamp
-}
+func (e *Entry) SetTimestamp(timestamp int64) { _ = "STUB: not implemented"; return }
 
-func (e *Entry) Timestamp() int64 {
-	return e.timestamp
-}
+func (e *Entry) Timestamp() int64 { _ = "STUB: not implemented"; return 0 }
 
-func (e *Entry) SetLastAccess(lastAccess int64) {
-	e.lastAccess = lastAccess
-}
+func (e *Entry) SetLastAccess(lastAccess int64) { _ = "STUB: not implemented"; return }
 
-func (e *Entry) LastAccess() int64 {
-	return e.lastAccess
-}
+func (e *Entry) LastAccess() int64 { _ = "STUB: not implemented"; return 0 }
 
-func (e *Entry) Encode() []byte {
-	var offset int
+func (e *Entry) Encode() []byte { _ = "STUB: not implemented"; return nil }
 
-	klen := uint8(len(e.Key()))
-	vlen := len(e.Value())
-	length := 29 + len(e.Key()) + vlen
+// Set key length. It's 1 byte.
 
-	buf := make([]byte, length)
+// Set the key.
 
-	// Set key length. It's 1 byte.
-	copy(buf[offset:], []byte{klen})
-	offset++
+// Set the TTL. It's 8 bytes.
 
-	// Set the key.
-	copy(buf[offset:], e.Key())
-	offset += len(e.Key())
+// Set the Timestamp. It's 8 bytes.
 
-	// Set the TTL. It's 8 bytes.
-	binary.BigEndian.PutUint64(buf[offset:], uint64(e.TTL()))
-	offset += 8
+// Set the LastAccess. It's 8 bytes.
 
-	// Set the Timestamp. It's 8 bytes.
-	binary.BigEndian.PutUint64(buf[offset:], uint64(e.Timestamp()))
-	offset += 8
+// Set the value length. It's 4 bytes.
 
-	// Set the LastAccess. It's 8 bytes.
-	binary.BigEndian.PutUint64(buf[offset:], uint64(e.LastAccess()))
-	offset += 8
+// Set the value.
 
-	// Set the value length. It's 4 bytes.
-	binary.BigEndian.PutUint32(buf[offset:], uint32(len(e.Value())))
-	offset += 4
-
-	// Set the value.
-	copy(buf[offset:], e.Value())
-	return buf
-}
-
-func (e *Entry) Decode(buf []byte) {
-	var offset int
-
-	keyLength := int(buf[offset])
-	offset++
-
-	e.key = string(buf[offset : offset+keyLength])
-	offset += keyLength
-
-	e.ttl = int64(binary.BigEndian.Uint64(buf[offset : offset+8]))
-	offset += 8
-
-	e.timestamp = int64(binary.BigEndian.Uint64(buf[offset : offset+8]))
-	offset += 8
-
-	e.lastAccess = int64(binary.BigEndian.Uint64(buf[offset : offset+8]))
-	offset += 8
-
-	vlen := binary.BigEndian.Uint32(buf[offset : offset+4])
-	offset += 4
-	e.value = buf[offset : offset+int(vlen)]
-}
+func (e *Entry) Decode(buf []byte) { _ = "STUB: not implemented"; return }

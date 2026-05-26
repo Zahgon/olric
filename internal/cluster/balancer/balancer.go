@@ -16,9 +16,7 @@ package balancer
 
 import (
 	"context"
-	"strings"
 	"sync"
-	"time"
 
 	"github.com/olric-data/olric/config"
 	"github.com/olric-data/olric/internal/cluster/partitions"
@@ -42,217 +40,58 @@ type Balancer struct {
 	cancel  context.CancelFunc
 }
 
-func New(e *environment.Environment) *Balancer {
-	c := e.Get("config").(*config.Config)
-	log := e.Get("logger").(*flog.Logger)
-	ctx, cancel := context.WithCancel(context.Background())
-	return &Balancer{
-		config:  c,
-		primary: e.Get("primary").(*partitions.Partitions),
-		backup:  e.Get("backup").(*partitions.Partitions),
-		rt:      e.Get("routingtable").(*routingtable.RoutingTable),
-		log:     log,
-		ctx:     ctx,
-		cancel:  cancel,
-	}
-}
+func New(e *environment.Environment) *Balancer { _ = "STUB: not implemented"; return nil }
 
-func (b *Balancer) isAlive() bool {
-	select {
-	case <-b.ctx.Done():
-		// The node is gone.
-		return false
-	default:
-	}
-	return true
-}
+func (b *Balancer) isAlive() bool { _ = "STUB: not implemented"; return false }
+
+// The node is gone.
 
 func (b *Balancer) scanPartition(sign uint64, part *partitions.Partition, owners ...discovery.Member) {
-	ownersStr := func() string {
-		var names []string
-		for _, owner := range owners {
-			names = append(names, owner.String())
-		}
-		return strings.Join(names, ",")
-	}()
-
-	part.Map().Range(func(rawName, rawFragment interface{}) bool {
-		f := rawFragment.(partitions.Fragment)
-		if f.Stats().Length == 0 {
-			return false
-		}
-		name := strings.TrimPrefix(rawName.(string), "dmap.")
-
-		b.log.V(2).Printf("[INFO] Moving %s fragment: %s (kind: %s) on PartID: %d to %s",
-			f.Name(), name, part.Kind(), part.ID(), ownersStr)
-
-		err := f.Move(part, name, owners)
-		if err != nil {
-			b.log.V(2).Printf("[ERROR] Failed to move %s fragment: %s on PartID: %d to %s: %v",
-				f.Name(), name, part.ID(), ownersStr, err)
-		}
-
-		// if this returns true, the iteration continues
-		return !b.breakLoop(sign)
-	})
+	_ = "STUB: not implemented"
+	return
 }
 
-func (b *Balancer) primaryCopies() {
-	sign := b.rt.Signature()
-	for partID := uint64(0); partID < b.config.PartitionCount; partID++ {
-		if b.breakLoop(sign) {
-			break
-		}
+// if this returns true, the iteration continues
 
-		part := b.primary.PartitionByID(partID)
-		if part.Length() == 0 {
-			// Empty partition. Skip it.
-			continue
-		}
+func (b *Balancer) primaryCopies() { _ = "STUB: not implemented"; return }
 
-		owner := part.Owner()
-		// Here we don't use CompareByID function because the routing table is an
-		// eventually consistent data structure and a node can try to move data
-		// to previous instance(the same name but a different birthdate)
-		// of itself. So just check the name.
-		if owner.CompareByName(b.rt.This()) {
-			// Already belongs to me.
-			continue
-		}
+// Empty partition. Skip it.
 
-		// This is a previous owner. Move the keys.
-		b.scanPartition(sign, part, owner)
-	}
-}
+// Here we don't use CompareByID function because the routing table is an
+// eventually consistent data structure and a node can try to move data
+// to previous instance(the same name but a different birthdate)
+// of itself. So just check the name.
 
-func (b *Balancer) breakLoop(sign uint64) bool {
-	if !b.isAlive() {
-		return true
-	}
+// Already belongs to me.
 
-	if sign != b.rt.Signature() {
-		// Routing table is updated. Just quit. Another balancer goroutine
-		// will work on the new table immediately.
-		return true
-	}
+// This is a previous owner. Move the keys.
 
-	return false
-}
+func (b *Balancer) breakLoop(sign uint64) bool { _ = "STUB: not implemented"; return false }
 
-func (b *Balancer) backupCopies() {
-	sign := b.rt.Signature()
-LOOP:
-	for partID := uint64(0); partID < b.config.PartitionCount; partID++ {
-		if b.breakLoop(sign) {
-			break
-		}
+// Routing table is updated. Just quit. Another balancer goroutine
+// will work on the new table immediately.
 
-		part := b.backup.PartitionByID(partID)
-		if part.Length() == 0 || part.OwnerCount() == 0 {
-			continue
-		}
+func (b *Balancer) backupCopies() { _ = "STUB: not implemented"; return }
 
-		var (
-			counter       = 1
-			currentOwners []discovery.Member
-		)
+// Here we don't use CompareById function because the routing table
+// is an eventually consistent data structure and a node can try to
+// move data to previous instance(the same name but a different birthdate)
+// of itself. So just check the name.
 
-		owners := part.Owners()
-		for i := len(owners) - 1; i >= 0; i-- {
-			if counter > b.config.ReplicaCount-1 {
-				break
-			}
+// Already belongs to me.
 
-			counter++
-			owner := owners[i]
-			// Here we don't use CompareById function because the routing table
-			// is an eventually consistent data structure and a node can try to
-			// move data to previous instance(the same name but a different birthdate)
-			// of itself. So just check the name.
-			if b.rt.This().CompareByName(owner) {
-				// Already belongs to me.
-				continue LOOP
-			}
-			currentOwners = append(currentOwners, owner)
-		}
+func (b *Balancer) triggerBalancer() { _ = "STUB: not implemented"; return }
 
-		if len(currentOwners) == 0 {
-			continue LOOP
-		}
+func (b *Balancer) BalanceEagerly() { _ = "STUB: not implemented"; return }
 
-		b.scanPartition(sign, part, currentOwners...)
-	}
-}
+func (b *Balancer) balance() { _ = "STUB: not implemented"; return }
 
-func (b *Balancer) triggerBalancer() {
-	b.Lock()
-	defer b.Unlock()
+func (b *Balancer) Start() error { _ = "STUB: not implemented"; return nil }
 
-	if err := b.rt.CheckBootstrap(); err != nil {
-		b.log.V(2).Printf("[WARN] Balancer awaits for bootstrapping")
-		return
-	}
+func (b *Balancer) RegisterHandlers() { _ = "STUB: not implemented"; return }
 
-	b.primaryCopies()
+func (b *Balancer) Shutdown(ctx context.Context) error { _ = "STUB: not implemented"; return nil }
 
-	if b.config.ReplicaCount > config.MinimumReplicaCount {
-		b.backupCopies()
-	}
-}
-
-func (b *Balancer) BalanceEagerly() {
-	b.triggerBalancer()
-}
-
-func (b *Balancer) balance() {
-	defer b.wg.Done()
-
-	timer := time.NewTimer(b.config.TriggerBalancerInterval)
-	defer timer.Stop()
-
-	for {
-		timer.Reset(b.config.TriggerBalancerInterval)
-		select {
-		case <-timer.C:
-			b.triggerBalancer()
-		case <-b.ctx.Done():
-			return
-		}
-	}
-}
-
-func (b *Balancer) Start() error {
-	b.wg.Add(1)
-	go b.balance()
-	return nil
-}
-
-func (b *Balancer) RegisterHandlers() {}
-
-func (b *Balancer) Shutdown(ctx context.Context) error {
-	select {
-	case <-b.ctx.Done():
-		// already closed
-		return nil
-	default:
-	}
-
-	b.cancel()
-	done := make(chan struct{})
-	go func() {
-		b.wg.Wait()
-		close(done)
-	}()
-	select {
-	case <-ctx.Done():
-		err := ctx.Err()
-		if err != nil {
-			return err
-		}
-	case <-done:
-	}
-
-	return nil
-}
+// already closed
 
 var _ service.Service = (*Balancer)(nil)

@@ -19,15 +19,9 @@ built-in maps and byte slices. It also supports compaction.
 package ramblock
 
 import (
-	"errors"
-	"fmt"
-	"io"
 	"log"
-	"reflect"
-	"sort"
 	"time"
 
-	"github.com/olric-data/olric/internal/ramblock/entry"
 	"github.com/olric-data/olric/internal/ramblock/table"
 	"github.com/olric-data/olric/pkg/storage"
 )
@@ -49,399 +43,171 @@ type RamBlock struct {
 	config              *storage.Config
 }
 
-func DefaultConfig() *storage.Config {
-	options := storage.NewConfig(nil)
-	options.Add("tableSize", defaultTableSize)
-	options.Add("maxIdleTableTimeout", defaultMaxIdleTableTimeout)
-	return options
-}
+func DefaultConfig() *storage.Config { _ = "STUB: not implemented"; return nil }
 
-func New(c *storage.Config) (*RamBlock, error) {
-	if c == nil {
-		c = DefaultConfig()
-	}
+func New(c *storage.Config) (*RamBlock, error) { _ = "STUB: not implemented"; return nil, nil }
 
-	raw, err := c.Get("tableSize")
-	if err != nil {
-		return nil, err
-	}
+func (rb *RamBlock) SetConfig(c *storage.Config) { _ = "STUB: not implemented"; return }
 
-	size, err := prepareTableSize(raw)
-	if err != nil {
-		return nil, err
-	}
+func (rb *RamBlock) makeTable() error { _ = "STUB: not implemented"; return nil }
 
-	return &RamBlock{
-		tableSize:           size,
-		tablesByCoefficient: make(map[uint64]*table.Table),
-		config:              c,
-	}, nil
-}
+func (rb *RamBlock) SetLogger(_ *log.Logger) { _ = "STUB: not implemented"; return }
 
-func (rb *RamBlock) SetConfig(c *storage.Config) {
-	rb.config = c
-}
+func (rb *RamBlock) Start() error { _ = "STUB: not implemented"; return nil }
 
-func (rb *RamBlock) makeTable() error {
-	if len(rb.tables) != 0 {
-		head := rb.tables[len(rb.tables)-1]
-		head.SetState(table.ReadOnlyState)
-
-		for i, t := range rb.tables {
-			if t.State() == table.RecycledState {
-
-				rb.tables = append(rb.tables[:i], rb.tables[i+1:]...)
-
-				rb.tables = append(rb.tables, t)
-				t.SetCoefficient(rb.coefficient)
-				rb.tablesByCoefficient[rb.coefficient] = t
-				rb.coefficient++
-
-				t.SetState(table.ReadWriteState)
-				return nil
-			}
-		}
-	}
-
-	newTable := table.New(rb.tableSize)
-	rb.tables = append(rb.tables, newTable)
-	newTable.SetCoefficient(rb.coefficient)
-	rb.tablesByCoefficient[rb.coefficient] = newTable
-	rb.coefficient++
-	return nil
-}
-
-func (rb *RamBlock) SetLogger(_ *log.Logger) {}
-
-func (rb *RamBlock) Start() error {
-	if rb.config == nil {
-		return errors.New("config cannot be nil")
-	}
-	return nil
-}
-
-func requiredSizeForAnEntry(e storage.Entry) uint64 {
-	return uint64(len(e.Key()) + len(e.Value()) + table.MetadataLength)
-}
+func requiredSizeForAnEntry(e storage.Entry) uint64 { _ = "STUB: not implemented"; return 0 }
 
 func prepareTableSize(raw interface{}) (size uint64, err error) {
-	switch raw.(type) {
-	case uint:
-		size = uint64(raw.(uint))
-	case uint8:
-		size = uint64(raw.(uint8))
-	case uint16:
-		size = uint64(raw.(uint16))
-	case uint32:
-		size = uint64(raw.(uint32))
-	case uint64:
-		size = raw.(uint64)
-	case int:
-		v := raw.(int)
-		if v < 0 {
-			err = fmt.Errorf("tableSize cannot be negative: %d", v)
-			return
-		}
-		size = uint64(v)
-	case int8:
-		v := raw.(int8)
-		if v < 0 {
-			err = fmt.Errorf("tableSize cannot be negative: %d", v)
-			return
-		}
-		size = uint64(v)
-	case int16:
-		v := raw.(int16)
-		if v < 0 {
-			err = fmt.Errorf("tableSize cannot be negative: %d", v)
-			return
-		}
-		size = uint64(v)
-	case int32:
-		v := raw.(int32)
-		if v < 0 {
-			err = fmt.Errorf("tableSize cannot be negative: %d", v)
-			return
-		}
-		size = uint64(v)
-	case int64:
-		v := raw.(int64)
-		if v < 0 {
-			err = fmt.Errorf("tableSize cannot be negative: %d", v)
-			return
-		}
-		size = uint64(v)
-	default:
-		err = fmt.Errorf("invalid type for tableSize: %s", reflect.TypeOf(raw))
-		return
-	}
-	return
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 // Fork creates a new RamBlock instance.
 func (rb *RamBlock) Fork(c *storage.Config) (storage.Engine, error) {
-	if c == nil {
-		c = rb.config.Copy()
-	}
-
-	child, err := New(c)
-	if err != nil {
-		return nil, err
-	}
-	t := table.New(rb.tableSize)
-	child.tables = append(child.tables, t)
-	t.SetCoefficient(child.coefficient)
-	child.tablesByCoefficient[child.coefficient] = t
-	child.coefficient++
-	return child, nil
+	_ = "STUB: not implemented"
+	return *new(storage.Engine), nil
 }
 
-func (rb *RamBlock) Name() string {
-	return "ramblock"
-}
+func (rb *RamBlock) Name() string { _ = "STUB: not implemented"; return "" }
 
 func (rb *RamBlock) NewEntry() storage.Entry {
-	return entry.New()
+	_ = "STUB: not implemented"
+
+	// putWithRetry ensures at least one table exists and retries the given write
+	// function on a new table when the current one runs out of space.
+	return *new(storage.Entry)
 }
 
-// putWithRetry ensures at least one table exists and retries the given write
-// function on a new table when the current one runs out of space.
 func (rb *RamBlock) putWithRetry(writeFn func(t *table.Table) error) error {
-	if len(rb.tables) == 0 {
-		if err := rb.makeTable(); err != nil {
-			return err
-		}
-	}
-
-	for {
-		// Get the last value, storage only calls Put on the last created table.
-		t := rb.tables[len(rb.tables)-1]
-		err := writeFn(t)
-		if errors.Is(err, table.ErrNotEnoughSpace) {
-			if err := rb.makeTable(); err != nil {
-				return err
-			}
-			// try again
-			continue
-		}
-		if err != nil {
-			return err
-		}
-		// everything is ok
-		return nil
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
+
+// Get the last value, storage only calls Put on the last created table.
+
+// try again
+
+// everything is ok
 
 // PutRaw sets the raw value for the given key.
-func (rb *RamBlock) PutRaw(hkey uint64, value []byte) error {
-	if uint64(len(value)) > rb.tableSize {
-		return storage.ErrEntryTooLarge
-	}
-
-	return rb.putWithRetry(func(t *table.Table) error {
-		return t.PutRaw(hkey, value)
-	})
-}
+func (rb *RamBlock) PutRaw(hkey uint64, value []byte) error { _ = "STUB: not implemented"; return nil }
 
 // Put sets the value for the given key. It overwrites any previous value for that key
 func (rb *RamBlock) Put(hkey uint64, value storage.Entry) error {
-	if requiredSizeForAnEntry(value) > rb.tableSize {
-		return storage.ErrEntryTooLarge
-	}
-
-	return rb.putWithRetry(func(t *table.Table) error {
-		return t.Put(hkey, value)
-	})
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // GetRaw extracts encoded value for the given hkey. This is useful for merging tables.
 func (rb *RamBlock) GetRaw(hkey uint64) ([]byte, error) {
+	_ = "STUB: not implemented"
 	// Scan available tables by starting the last added table.
-	for i := len(rb.tables) - 1; i >= 0; i-- {
-		t := rb.tables[i]
-		raw, err := t.GetRaw(hkey)
-		if errors.Is(err, table.ErrHKeyNotFound) {
-			// Try out the other tables.
-			continue
-		}
-		if err != nil {
-			return nil, err
-		}
-		// Found the key, return the stored value with its metadata.
-		return raw, nil
-	}
-
-	// Nothing here.
-	return nil, storage.ErrKeyNotFound
+	return nil, nil
 }
+
+// Try out the other tables.
+
+// Found the key, return the stored value with its metadata.
+
+// Nothing here.
 
 // Get gets the value for the given key. It returns storage.ErrKeyNotFound if the DB
 // does not contain the key. The returned Entry is its own copy,
 // it is safe to modify the contents of the returned slice.
 func (rb *RamBlock) Get(hkey uint64) (storage.Entry, error) {
+	_ = "STUB: not implemented"
 	// Scan available tables by starting the last added table.
-	for i := len(rb.tables) - 1; i >= 0; i-- {
-		t := rb.tables[i]
-		res, err := t.Get(hkey)
-		if errors.Is(err, table.ErrHKeyNotFound) {
-			// Try out the other tables.
-			continue
-		}
-		if err != nil {
-			return nil, err
-		}
-		// Found the key, return the stored value with its metadata.
-		return res, nil
-	}
-	// Nothing here.
-	return nil, storage.ErrKeyNotFound
+	return *new(storage.Entry), nil
 }
+
+// Try out the other tables.
+
+// Found the key, return the stored value with its metadata.
+
+// Nothing here.
 
 // GetTTL gets the timeout for the given key. It returns storage.ErrKeyNotFound if the DB
 // does not contain the key.
 func (rb *RamBlock) GetTTL(hkey uint64) (int64, error) {
+	_ = "STUB: not implemented"
 	// Scan available tables by starting the last added table.
-	for i := len(rb.tables) - 1; i >= 0; i-- {
-		t := rb.tables[i]
-		ttl, err := t.GetTTL(hkey)
-		if errors.Is(err, table.ErrHKeyNotFound) {
-			// Try out the other tables.
-			continue
-		}
-		if err != nil {
-			return 0, err
-		}
-		// Found the key, return its ttl
-		return ttl, nil
-	}
-
-	// Nothing here.
-	return 0, storage.ErrKeyNotFound
+	return 0, nil
 }
+
+// Try out the other tables.
+
+// Found the key, return its ttl
+
+// Nothing here.
 
 func (rb *RamBlock) GetLastAccess(hkey uint64) (int64, error) {
+	_ = "STUB: not implemented"
 	// Scan available tables by starting the last added table.
-	for i := len(rb.tables) - 1; i >= 0; i-- {
-		t := rb.tables[i]
-		lastAccess, err := t.GetLastAccess(hkey)
-		if errors.Is(err, table.ErrHKeyNotFound) {
-			// Try out the other tables.
-			continue
-		}
-		if err != nil {
-			return 0, err
-		}
-		// Found the key, return its ttl
-		return lastAccess, nil
-	}
-
-	// Nothing here.
-	return 0, storage.ErrKeyNotFound
+	return 0, nil
 }
+
+// Try out the other tables.
+
+// Found the key, return its ttl
+
+// Nothing here.
 
 // GetKey gets the key for the given hkey. It returns storage.ErrKeyNotFound if the DB
 // does not contain the key.
 func (rb *RamBlock) GetKey(hkey uint64) (string, error) {
+	_ = "STUB: not implemented"
 	// Scan available tables by starting the last added table.
-	for i := len(rb.tables) - 1; i >= 0; i-- {
-		t := rb.tables[i]
-		key, err := t.GetKey(hkey)
-		if errors.Is(err, table.ErrHKeyNotFound) {
-			// Try out the other tables.
-			continue
-		}
-		if err != nil {
-			return "", err
-		}
-		// Found the key, return its ttl
-		return key, nil
-	}
-
-	// Nothing here.
-	return "", storage.ErrKeyNotFound
+	return "", nil
 }
+
+// Try out the other tables.
+
+// Found the key, return its ttl
+
+// Nothing here.
 
 // Delete deletes the value for the given key. Delete will not returns error if key doesn't exist.
 func (rb *RamBlock) Delete(hkey uint64) error {
+	_ = "STUB: not implemented"
 	// Scan available tables by starting the last added table.
-	for i := len(rb.tables) - 1; i >= 0; i-- {
-		t := rb.tables[i]
-		err := t.Delete(hkey)
-		if errors.Is(err, table.ErrHKeyNotFound) {
-			// Try out the other tables.
-			continue
-		}
-		if err != nil {
-			return err
-		}
-		break
-	}
-
 	return nil
 }
 
+// Try out the other tables.
+
 // UpdateTTL updates the expiry for the given key.
 func (rb *RamBlock) UpdateTTL(hkey uint64, data storage.Entry) error {
+	_ = "STUB: not implemented"
 	// Scan available tables by starting the last added table.
-	for i := len(rb.tables) - 1; i >= 0; i-- {
-		t := rb.tables[i]
-		err := t.UpdateTTL(hkey, data)
-		if errors.Is(err, table.ErrHKeyNotFound) {
-			// Try out the other tables.
-			continue
-		}
-		if err != nil {
-			return err
-		}
-		// Found the key, return the stored value with its metadata.
-		return nil
-	}
-	// Nothing here.
-	return storage.ErrKeyNotFound
+	return nil
 }
 
+// Try out the other tables.
+
+// Found the key, return the stored value with its metadata.
+
+// Nothing here.
+
 // Stats is a function which provides memory allocation and garbage ratio of a storage instance.
-func (rb *RamBlock) Stats() storage.Stats {
-	stats := storage.Stats{
-		NumTables: len(rb.tables),
-	}
-	for _, t := range rb.tables {
-		s := t.Stats()
-		stats.Allocated += int(s.Allocated)
-		stats.Inuse += int(s.Inuse)
-		stats.Garbage += int(s.Garbage)
-		stats.Length += s.Length
-	}
-	return stats
-}
+func (rb *RamBlock) Stats() storage.Stats { _ = "STUB: not implemented"; return *new(storage.Stats) }
 
 // Check checks the key existence.
 func (rb *RamBlock) Check(hkey uint64) bool {
+	_ = "STUB: not implemented"
 	// Scan available tables by starting the last added table.
-	for i := len(rb.tables) - 1; i >= 0; i-- {
-		t := rb.tables[i]
-		ok := t.Check(hkey)
-		if ok {
-			return true
-		}
-	}
-
-	// Nothing there.
 	return false
 }
+
+// Nothing there.
 
 // Range calls f sequentially for each key and value present in the map.
 // If f returns false, range stops the iteration. Range may be O(N) with
 // the number of elements in the map even if f returns false after a constant
 // number of calls.
 func (rb *RamBlock) Range(f func(hkey uint64, e storage.Entry) bool) {
+	_ = "STUB: not implemented"
 	// Scan available tables by starting the last added table.
-	for i := len(rb.tables) - 1; i >= 0; i-- {
-		t := rb.tables[i]
-		t.Range(func(hkey uint64, e storage.Entry) bool {
-			return f(hkey, e)
-		})
-	}
+	return
 }
 
 // RangeHKey calls f sequentially for each key present in the map.
@@ -449,93 +215,41 @@ func (rb *RamBlock) Range(f func(hkey uint64, e storage.Entry) bool) {
 // the number of elements in the map even if f returns false after a constant
 // number of calls.
 func (rb *RamBlock) RangeHKey(f func(hkey uint64) bool) {
+	_ = "STUB: not implemented"
 	// Scan available tables by starting the last added table.
-	for i := len(rb.tables) - 1; i >= 0; i-- {
-		t := rb.tables[i]
-		t.RangeHKey(func(hkey uint64) bool {
-			return f(hkey)
-		})
-	}
+	return
 }
 
 func (rb *RamBlock) findCoefficient(coefficient uint64) (uint64, error) {
-	var sortedCoefficients []uint64
-	for newCf := range rb.tablesByCoefficient {
-		sortedCoefficients = append(sortedCoefficients, newCf)
-	}
-	sort.Slice(sortedCoefficients, func(i, j int) bool { return sortedCoefficients[i] < sortedCoefficients[j] })
-	for _, cf := range sortedCoefficients {
-		if cf > coefficient {
-			return cf, nil
-		}
-	}
-	return 0, io.EOF
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (rb *RamBlock) scanCommon(cursor uint64, expr string, count int, f func(e storage.Entry) bool) (uint64, error) {
-	if len(rb.tables) == 0 {
-		return 0, nil
-	}
-
-	var err error
-	cf := cursor / rb.tableSize
-	t, ok := rb.tablesByCoefficient[cf]
-	if !ok {
-		cf, err = rb.findCoefficient(cf)
-		if err != nil {
-			// Invalid cursor
-			return 0, nil
-		}
-		t = rb.tablesByCoefficient[cf]
-		cursor = cf * rb.tableSize
-	}
-
-	var tableCursor = cursor
-	if cf > 0 {
-		tableCursor = cursor - (rb.tableSize * cf)
-	}
-
-	if expr == "" {
-		tableCursor, err = t.Scan(tableCursor, count, f)
-	} else {
-		tableCursor, err = t.ScanRegexMatch(tableCursor, expr, count, f)
-	}
-	if err != nil {
-		return 0, err
-	}
-
-	if tableCursor == 0 {
-		_, ok := rb.tablesByCoefficient[cf+1]
-		if !ok {
-			cf, err = rb.findCoefficient(cf)
-			if err != nil {
-				// Invalid cursor
-				return 0, nil
-			}
-			// findCoefficient already returns the next valid coefficient
-			return rb.tableSize * cf, nil
-		}
-		// The next table
-		return rb.tableSize * (cf + 1), nil
-	}
-
-	return tableCursor + (rb.tableSize * cf), nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
+// Invalid cursor
+
+// Invalid cursor
+
+// findCoefficient already returns the next valid coefficient
+
+// The next table
+
 func (rb *RamBlock) Scan(cursor uint64, count int, f func(e storage.Entry) bool) (uint64, error) {
-	return rb.scanCommon(cursor, "", count, f)
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (rb *RamBlock) ScanRegexMatch(cursor uint64, expr string, count int, f func(e storage.Entry) bool) (uint64, error) {
-	return rb.scanCommon(cursor, expr, count, f)
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
-func (rb *RamBlock) Close() error {
-	return nil
-}
+func (rb *RamBlock) Close() error { _ = "STUB: not implemented"; return nil }
 
-func (rb *RamBlock) Destroy() error {
-	return nil
-}
+func (rb *RamBlock) Destroy() error { _ = "STUB: not implemented"; return nil }
 
 var _ storage.Engine = (*RamBlock)(nil)

@@ -15,115 +15,42 @@
 package routingtable
 
 import (
-	"fmt"
-
-	"github.com/cespare/xxhash/v2"
-	"github.com/olric-data/olric/internal/cluster/partitions"
-	"github.com/olric-data/olric/internal/protocol"
 	"github.com/tidwall/redcon"
-	"github.com/vmihailenco/msgpack/v5"
 )
 
 func (r *RoutingTable) lengthOfPartCommandHandler(conn redcon.Conn, cmd redcon.Command) {
+	_ = "STUB: not implemented"
 	// The command handlers of the routing table service should wait for the cluster join event.
-	<-r.joined
-
-	lengthOfPartCmd, err := protocol.ParseLengthOfPartCommand(cmd)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	var part *partitions.Partition
-	if lengthOfPartCmd.Replica {
-		part = r.backup.PartitionByID(lengthOfPartCmd.PartID)
-	} else {
-		part = r.primary.PartitionByID(lengthOfPartCmd.PartID)
-	}
-
-	conn.WriteInt(part.Length())
+	return
 }
 
 func (r *RoutingTable) verifyRoutingTable(id uint64, table map[uint64]*route) error {
+	_ = "STUB: not implemented"
 	// Check the coordinator
-	coordinator, err := r.discovery.FindMemberByID(id)
-	if err != nil {
-		return err
-	}
-
-	myCoordinator := r.discovery.GetCoordinator()
-	if !coordinator.CompareByID(myCoordinator) {
-		return fmt.Errorf("unrecognized cluster coordinator: %s: %s", coordinator, myCoordinator)
-	}
-
-	// Compare partition counts to catch a possible inconsistencies in configuration
-	if r.config.PartitionCount != uint64(len(table)) {
-		return fmt.Errorf("invalid partition count: %d", len(table))
-	}
 	return nil
 }
 
+// Compare partition counts to catch a possible inconsistencies in configuration
+
 func (r *RoutingTable) updateRoutingCommandHandler(conn redcon.Conn, cmd redcon.Command) {
+	_ = "STUB: not implemented"
 	// The command handlers of the routing table service should wait for the cluster join event.
-	<-r.joined
-
-	r.updateRoutingMtx.Lock()
-	defer r.updateRoutingMtx.Unlock()
-
-	updateRoutingCmd, err := protocol.ParseUpdateRoutingCommand(cmd)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	table := make(map[uint64]*route)
-	err = msgpack.Unmarshal(updateRoutingCmd.Payload, &table)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	// Log this event
-	coordinator, err := r.discovery.FindMemberByID(updateRoutingCmd.CoordinatorID)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-	r.log.V(3).Printf("[INFO] Routing table has been pushed by %s", coordinator)
-
-	if err = r.verifyRoutingTable(updateRoutingCmd.CoordinatorID, table); err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	// owners(atomic.value) is guarded by routingUpdateMtx against parallel writers.
-	// Calculate routing signature. This is useful to control balancing tasks.
-	r.setSignature(xxhash.Sum64(updateRoutingCmd.Payload))
-	for partID, data := range table {
-		// Set partition(primary copies) owners
-		part := r.primary.PartitionByID(partID)
-		part.SetOwners(data.Owners)
-
-		// Set backup owners
-		bpart := r.backup.PartitionByID(partID)
-		bpart.SetOwners(data.Backups)
-	}
-
-	// Used by the LRU implementation.
-	r.setOwnedPartitionCount()
-
-	// Bootstrapped by the coordinator.
-	r.markBootstrapped()
-
-	// Collect report
-	value, err := r.prepareLeftOverDataReport()
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	// Call balancer to distribute load evenly
-	r.wg.Add(1)
-	go r.runCallbacks()
-	conn.WriteBulk(value)
+	return
 }
+
+// Log this event
+
+// owners(atomic.value) is guarded by routingUpdateMtx against parallel writers.
+// Calculate routing signature. This is useful to control balancing tasks.
+
+// Set partition(primary copies) owners
+
+// Set backup owners
+
+// Used by the LRU implementation.
+
+// Bootstrapped by the coordinator.
+
+// Collect report
+
+// Call balancer to distribute load evenly

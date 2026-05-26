@@ -15,14 +15,7 @@
 package events
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
 	"reflect"
-	"strconv"
-	"strings"
-
-	"github.com/olric-data/olric/internal/util"
 )
 
 const (
@@ -39,48 +32,13 @@ type Event interface {
 
 // encodeEvents encodes given interface to its JSON representation and preserves the order in fields slice.
 func encodeEvent(data interface{}, fields []string, valueExtractor func(r reflect.Value, field string) (interface{}, error)) (string, error) {
-	buf := bytes.NewBuffer(nil)
-	buf.WriteString("{")
-	r := reflect.Indirect(reflect.ValueOf(data))
-	for i, field := range fields {
-		sf, ok := r.Type().FieldByName(field)
-		if !ok {
-			return "", fmt.Errorf("field not found: %s", field)
-		}
-
-		tag := strings.Trim(string(sf.Tag), "json:")
-		tag, err := strconv.Unquote(tag)
-		if err != nil {
-			return "", err
-		}
-
-		value, err := valueExtractor(r, field)
-		if err != nil {
-			return "", err
-		}
-
-		if i != 0 {
-			buf.WriteString(",")
-		}
-
-		// marshal key
-		key, err := json.Marshal(tag)
-		if err != nil {
-			return "", err
-		}
-		buf.Write(key)
-
-		buf.WriteString(":")
-		// marshal value
-		val, err := json.Marshal(value)
-		if err != nil {
-			return "", err
-		}
-		buf.Write(val)
-	}
-	buf.WriteString("}")
-	return util.BytesToString(buf.Bytes()), nil
+	_ = "STUB: not implemented"
+	return "", nil
 }
+
+// marshal key
+
+// marshal value
 
 type NodeJoinEvent struct {
 	Kind      string `json:"kind"`
@@ -89,21 +47,7 @@ type NodeJoinEvent struct {
 	Timestamp int64  `json:"timestamp"`
 }
 
-func (n *NodeJoinEvent) Encode() (string, error) {
-	fields := []string{"Timestamp", "Source", "Kind", "NodeJoin"}
-	return encodeEvent(n, fields, func(r reflect.Value, field string) (interface{}, error) {
-		var value interface{}
-		switch field {
-		case "Timestamp":
-			value = r.FieldByName(field).Int()
-		case "Source", "Kind", "NodeJoin":
-			value = r.FieldByName(field).String()
-		default:
-			return nil, fmt.Errorf("invalid field: %s", field)
-		}
-		return value, nil
-	})
-}
+func (n *NodeJoinEvent) Encode() (string, error) { _ = "STUB: not implemented"; return "", nil }
 
 type NodeLeftEvent struct {
 	Kind      string `json:"kind"`
@@ -112,21 +56,7 @@ type NodeLeftEvent struct {
 	Timestamp int64  `json:"timestamp"`
 }
 
-func (n *NodeLeftEvent) Encode() (string, error) {
-	fields := []string{"Timestamp", "Source", "Kind", "NodeLeft"}
-	return encodeEvent(n, fields, func(r reflect.Value, field string) (interface{}, error) {
-		var value interface{}
-		switch field {
-		case "Timestamp":
-			value = r.FieldByName(field).Int()
-		case "Source", "Kind", "NodeLeft":
-			value = r.FieldByName(field).String()
-		default:
-			return nil, fmt.Errorf("invalid field: %s", field)
-		}
-		return value, nil
-	})
-}
+func (n *NodeLeftEvent) Encode() (string, error) { _ = "STUB: not implemented"; return "", nil }
 
 type FragmentMigrationEvent struct {
 	Kind          string `json:"kind"`
@@ -141,33 +71,8 @@ type FragmentMigrationEvent struct {
 }
 
 func (f *FragmentMigrationEvent) Encode() (string, error) {
-	fields := []string{
-		"Timestamp",
-		"Source",
-		"Kind",
-		"Target",
-		"DataStructure",
-		"PartitionID",
-		"Identifier",
-		"IsBackup",
-		"Length",
-	}
-	return encodeEvent(f, fields, func(r reflect.Value, field string) (interface{}, error) {
-		var value interface{}
-		switch field {
-		case "IsBackup":
-			value = r.FieldByName(field).Bool()
-		case "PartitionID":
-			value = r.FieldByName(field).Uint()
-		case "Timestamp", "Length":
-			value = r.FieldByName(field).Int()
-		case "Source", "Kind", "Target", "DataStructure", "Identifier":
-			value = r.FieldByName(field).String()
-		default:
-			return nil, fmt.Errorf("invalid field: %s", field)
-		}
-		return value, nil
-	})
+	_ = "STUB: not implemented"
+	return "", nil
 }
 
 type FragmentReceivedEvent struct {
@@ -181,31 +86,4 @@ type FragmentReceivedEvent struct {
 	Timestamp     int64  `json:"timestamp"`
 }
 
-func (f *FragmentReceivedEvent) Encode() (string, error) {
-	fields := []string{
-		"Timestamp",
-		"Source",
-		"Kind",
-		"DataStructure",
-		"PartitionID",
-		"Identifier",
-		"IsBackup",
-		"Length",
-	}
-	return encodeEvent(f, fields, func(r reflect.Value, field string) (interface{}, error) {
-		var value interface{}
-		switch field {
-		case "IsBackup":
-			value = r.FieldByName(field).Bool()
-		case "PartitionID":
-			value = r.FieldByName(field).Uint()
-		case "Timestamp", "Length":
-			value = r.FieldByName(field).Int()
-		case "Source", "Kind", "DataStructure", "Identifier":
-			value = r.FieldByName(field).String()
-		default:
-			return nil, fmt.Errorf("invalid field: %s", field)
-		}
-		return value, nil
-	})
-}
+func (f *FragmentReceivedEvent) Encode() (string, error) { _ = "STUB: not implemented"; return "", nil }

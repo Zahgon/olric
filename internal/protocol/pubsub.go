@@ -17,7 +17,6 @@ package protocol
 import (
 	"context"
 
-	"github.com/olric-data/olric/internal/util"
 	"github.com/redis/go-redis/v9"
 	"github.com/tidwall/redcon"
 )
@@ -27,31 +26,17 @@ type Publish struct {
 	Message string
 }
 
-func NewPublish(channel, message string) *Publish {
-	return &Publish{
-		Channel: channel,
-		Message: message,
-	}
-}
+func NewPublish(channel, message string) *Publish { _ = "STUB: not implemented"; return nil }
 
-func (p *Publish) Command(ctx context.Context) *redis.IntCmd {
-	var args []interface{}
-	args = append(args, PubSub.Publish)
-	args = append(args, p.Channel)
-	args = append(args, p.Message)
-	return redis.NewIntCmd(ctx, args...)
-}
+func (p *Publish) Command(ctx context.Context) *redis.IntCmd { _ = "STUB: not implemented"; return nil }
 
 func ParsePublishCommand(cmd redcon.Command) (*Publish, error) {
-	if len(cmd.Args) < 3 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	return NewPublish(
-		util.BytesToString(cmd.Args[1]), // Channel
-		util.BytesToString(cmd.Args[2]), // Message
-	), nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// Channel
+// Message
 
 type PublishInternal struct {
 	Channel string
@@ -59,183 +44,102 @@ type PublishInternal struct {
 }
 
 func NewPublishInternal(channel, message string) *PublishInternal {
-	return &PublishInternal{
-		Channel: channel,
-		Message: message,
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (p *PublishInternal) Command(ctx context.Context) *redis.IntCmd {
-	var args []interface{}
-	args = append(args, PubSub.PublishInternal)
-	args = append(args, p.Channel)
-	args = append(args, p.Message)
-	return redis.NewIntCmd(ctx, args...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ParsePublishInternalCommand(cmd redcon.Command) (*PublishInternal, error) {
-	if len(cmd.Args) < 3 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	return NewPublishInternal(
-		util.BytesToString(cmd.Args[1]), // Channel
-		util.BytesToString(cmd.Args[2]), // Message
-	), nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// Channel
+// Message
 
 type Subscribe struct {
 	Channels []string
 }
 
-func NewSubscribe(channels ...string) *Subscribe {
-	return &Subscribe{
-		Channels: channels,
-	}
-}
+func NewSubscribe(channels ...string) *Subscribe { _ = "STUB: not implemented"; return nil }
 
 func (s *Subscribe) Command(ctx context.Context) *redis.SliceCmd {
-	var args []interface{}
-	args = append(args, PubSub.Subscribe)
-	for _, channel := range s.Channels {
-		args = append(args, channel)
-	}
-	return redis.NewSliceCmd(ctx, args...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ParseSubscribeCommand(cmd redcon.Command) (*Subscribe, error) {
-	if len(cmd.Args) < 2 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	var channels []string
-	args := cmd.Args[1:]
-	for len(args) > 0 {
-		arg := util.BytesToString(args[0])
-		channels = append(channels, arg)
-		args = args[1:]
-	}
-	return NewSubscribe(channels...), nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 type PSubscribe struct {
 	Patterns []string
 }
 
-func NewPSubscribe(patterns ...string) *PSubscribe {
-	return &PSubscribe{
-		Patterns: patterns,
-	}
-}
+func NewPSubscribe(patterns ...string) *PSubscribe { _ = "STUB: not implemented"; return nil }
 
 func (s *PSubscribe) Command(ctx context.Context) *redis.SliceCmd {
-	var args []interface{}
-	args = append(args, PubSub.Subscribe)
-	for _, channel := range s.Patterns {
-		args = append(args, channel)
-	}
-	return redis.NewSliceCmd(ctx, args...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ParsePSubscribeCommand(cmd redcon.Command) (*PSubscribe, error) {
-	if len(cmd.Args) < 2 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	var patterns []string
-	args := cmd.Args[1:]
-	for len(args) > 0 {
-		arg := util.BytesToString(args[0])
-		patterns = append(patterns, arg)
-		args = args[1:]
-	}
-	return NewPSubscribe(patterns...), nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 type PubSubChannels struct {
 	Pattern string
 }
 
-func NewPubSubChannels() *PubSubChannels {
-	return &PubSubChannels{}
-}
+func NewPubSubChannels() *PubSubChannels { _ = "STUB: not implemented"; return nil }
 
 func (ps *PubSubChannels) SetPattern(pattern string) *PubSubChannels {
-	ps.Pattern = pattern
-	return ps
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (ps *PubSubChannels) Command(ctx context.Context) *redis.SliceCmd {
-	var args []interface{}
-	args = append(args, PubSub.PubSubChannels)
-	if ps.Pattern != "" {
-		args = append(args, ps.Pattern)
-	}
-	return redis.NewSliceCmd(ctx, args...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ParsePubSubChannelsCommand(cmd redcon.Command) (*PubSubChannels, error) {
-	if len(cmd.Args) < 2 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	ps := NewPubSubChannels()
-	if len(cmd.Args) >= 3 {
-		ps.SetPattern(util.BytesToString(cmd.Args[2]))
-	}
-	return ps, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 type PubSubNumpat struct{}
 
-func NewPubSubNumpat() *PubSubNumpat {
-	return &PubSubNumpat{}
-}
+func NewPubSubNumpat() *PubSubNumpat { _ = "STUB: not implemented"; return nil }
 
 func (ps *PubSubNumpat) Command(ctx context.Context) *redis.IntCmd {
-	var args []interface{}
-	args = append(args, PubSub.PubSubNumpat)
-	return redis.NewIntCmd(ctx, args...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ParsePubSubNumpatCommand(cmd redcon.Command) (*PubSubNumpat, error) {
-	if len(cmd.Args) < 2 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	return NewPubSubNumpat(), nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 type PubSubNumsub struct {
 	Channels []string
 }
 
-func NewPubSubNumsub(channels ...string) *PubSubNumsub {
-	return &PubSubNumsub{
-		Channels: channels,
-	}
-}
+func NewPubSubNumsub(channels ...string) *PubSubNumsub { _ = "STUB: not implemented"; return nil }
 
 func (ps *PubSubNumsub) Command(ctx context.Context) *redis.SliceCmd {
-	var args []interface{}
-	args = append(args, PubSub.PubSubNumsub)
-	for _, channel := range ps.Channels {
-		args = append(args, channel)
-	}
-	return redis.NewSliceCmd(ctx, args...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ParsePubSubNumsubCommand(cmd redcon.Command) (*PubSubNumsub, error) {
-	if len(cmd.Args) < 2 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	var channels []string
-	args := cmd.Args[2:]
-	for len(args) > 0 {
-		arg := util.BytesToString(args[0])
-		channels = append(channels, arg)
-		args = args[1:]
-	}
-	return NewPubSubNumsub(channels...), nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }

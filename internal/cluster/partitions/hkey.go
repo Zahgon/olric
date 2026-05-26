@@ -16,7 +16,6 @@ package partitions
 
 import (
 	"sync"
-	"unsafe"
 
 	"github.com/olric-data/olric/hasher"
 )
@@ -26,13 +25,6 @@ var (
 	once     sync.Once
 )
 
-func SetHashFunc(h hasher.Hasher) {
-	once.Do(func() {
-		hashFunc = h
-	})
-}
+func SetHashFunc(h hasher.Hasher) { _ = "STUB: not implemented"; return }
 
-func HKey(name, key string) uint64 {
-	tmp := name + key
-	return hashFunc.Sum64(*(*[]byte)(unsafe.Pointer(&tmp)))
-}
+func HKey(name, key string) uint64 { _ = "STUB: not implemented"; return 0 }

@@ -15,28 +15,10 @@
 package config
 
 import (
-	"fmt"
-	"net"
-	"strings"
-
-	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/memberlist"
 )
 
-func (c *Config) validateMemberlistConfig() error {
-	var result error
-	if c.MemberlistConfig.AdvertiseAddr != "" {
-		if ip := net.ParseIP(c.MemberlistConfig.AdvertiseAddr); ip == nil {
-			result = multierror.Append(result,
-				fmt.Errorf("memberlist: AdvertiseAddr has to be a valid IPv4 or IPv6 address"))
-		}
-	}
-	if c.MemberlistConfig.BindAddr == "" {
-		result = multierror.Append(result,
-			fmt.Errorf("memberlist: BindAddr cannot be an empty string"))
-	}
-	return result
-}
+func (c *Config) validateMemberlistConfig() error { _ = "STUB: not implemented"; return nil }
 
 // NewMemberlistConfig returns a new memberlist.Config for a given environment.
 //
@@ -58,14 +40,6 @@ func (c *Config) validateMemberlistConfig() error {
 // DefaultWANConfig works like DefaultConfig, however it returns a configuration that is optimized for most WAN
 // environments. The default configuration is still very conservative and errs on the side of caution.
 func NewMemberlistConfig(env string) (*memberlist.Config, error) {
-	e := strings.ToLower(env)
-	switch e {
-	case "local":
-		return memberlist.DefaultLocalConfig(), nil
-	case "lan":
-		return memberlist.DefaultLANConfig(), nil
-	case "wan":
-		return memberlist.DefaultWANConfig(), nil
-	}
-	return nil, fmt.Errorf("unknown env: %s", env)
+	_ = "STUB: not implemented"
+	return nil, nil
 }

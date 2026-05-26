@@ -16,11 +16,7 @@
 package flog // import "github.com/olric-data/olric/pkg/flog"
 
 import (
-	"fmt"
 	"log"
-	"path"
-	"runtime"
-	"sync/atomic"
 )
 
 /*
@@ -60,27 +56,13 @@ type Logger struct {
 }
 
 // New returns a new Logger
-func New(logger *log.Logger) *Logger {
-	return &Logger{
-		logger: logger,
-	}
-}
+func New(logger *log.Logger) *Logger { _ = "STUB: not implemented"; return nil }
 
 // SetLevel sets verbosity level.
-func (f *Logger) SetLevel(level int32) {
-	if level < 0 {
-		return
-	}
-	atomic.StoreInt32(&f.level, level)
-}
+func (f *Logger) SetLevel(level int32) { _ = "STUB: not implemented"; return }
 
 // ShowLineNumber enables line number support if show is bigger than zero.
-func (f *Logger) ShowLineNumber(show int32) {
-	if show < 0 {
-		return
-	}
-	atomic.StoreInt32(&f.showLineNum, show)
-}
+func (f *Logger) ShowLineNumber(show int32) { _ = "STUB: not implemented"; return }
 
 // Verbose is a type that implements Printf and Println with verbosity support.
 type Verbose struct {
@@ -90,42 +72,19 @@ type Verbose struct {
 
 // V reports whether verbosity at the call site is at least the requested level. The returned value is a struct
 // of type Verbose, which implements Printf and Println
-func (f *Logger) V(level int32) Verbose {
-	return Verbose{
-		ok: atomic.LoadInt32(&f.level) >= level,
-		f:  f,
-	}
-}
+func (f *Logger) V(level int32) Verbose { _ = "STUB: not implemented"; return *new(Verbose) }
 
 // Ok will return true if this log level is enabled, guarded by the value of verbosity level.
 func (v Verbose) Ok() bool {
-	return v.ok
+	_ = "STUB: not implemented"
+
+	// Printf calls v.f.logger.Printf to print to the logger.
+	// Arguments are handled in the manner of fmt.Printf.
+	return false
 }
 
-// Printf calls v.f.logger.Printf to print to the logger.
-// Arguments are handled in the manner of fmt.Printf.
-func (v Verbose) Printf(format string, i ...interface{}) {
-	if !v.ok {
-		return
-	}
-	if atomic.LoadInt32(&v.f.showLineNum) != 1 {
-		v.f.logger.Printf(format, i...)
-	} else {
-		_, fn, line, _ := runtime.Caller(1)
-		v.f.logger.Printf(fmt.Sprintf("%s => %s:%d", format, path.Base(fn), line), i...)
-	}
-}
+func (v Verbose) Printf(format string, i ...interface{}) { _ = "STUB: not implemented"; return }
 
 // Println calls v.f.logger.Println to print to the logger.
 // Arguments are handled in the manner of fmt.Println.
-func (v Verbose) Println(i ...interface{}) {
-	if !v.ok {
-		return
-	}
-	if atomic.LoadInt32(&v.f.showLineNum) != 1 {
-		v.f.logger.Println(i...)
-	} else {
-		_, fn, line, _ := runtime.Caller(1)
-		v.f.logger.Println(fmt.Sprintf("%s => %s:%d", fmt.Sprint(i...), path.Base(fn), line))
-	}
-}
+func (v Verbose) Println(i ...interface{}) { _ = "STUB: not implemented"; return }

@@ -17,9 +17,7 @@ package config
 import (
 	"context"
 	"crypto/tls"
-	"fmt"
 	"net"
-	"runtime"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -107,115 +105,19 @@ type Client struct {
 }
 
 // NewClient returns a new configuration object for clients.
-func NewClient() *Client {
-	c := &Client{
-		Authentication: &Authentication{},
-	}
-	err := c.Sanitize()
-	if err != nil {
-		panic(fmt.Sprintf("failed to create a new client configuration: %v", err))
-	}
-	return c
-}
+func NewClient() *Client { _ = "STUB: not implemented"; return nil }
 
 // Sanitize sets default values to empty configuration variables, if it's possible.
-func (c *Client) Sanitize() error {
-	if err := c.Authentication.Sanitize(); err != nil {
-		return fmt.Errorf("failed to sanitize authentication configuration: %w", err)
-	}
-
-	if c.DialTimeout == 0 {
-		c.DialTimeout = DefaultDialTimeout
-	}
-	if c.Dialer == nil {
-		c.Dialer = func(ctx context.Context, network, addr string) (net.Conn, error) {
-			netDialer := &net.Dialer{
-				Timeout:   c.DialTimeout,
-				KeepAlive: DefaultKeepalive,
-			}
-			if c.TLSConfig == nil {
-				return netDialer.DialContext(ctx, network, addr)
-			}
-			return tls.DialWithDialer(netDialer, network, addr, c.TLSConfig)
-		}
-	}
-	if c.PoolSize == 0 {
-		c.PoolSize = 10 * runtime.GOMAXPROCS(0)
-	}
-	switch c.ReadTimeout {
-	case -1:
-		c.ReadTimeout = 0
-	case 0:
-		c.ReadTimeout = DefaultReadTimeout
-	}
-	switch c.WriteTimeout {
-	case -1:
-		c.WriteTimeout = 0
-	case 0:
-		c.WriteTimeout = c.ReadTimeout
-	}
-	if c.PoolTimeout == 0 {
-		c.PoolTimeout = c.ReadTimeout + time.Second
-	}
-	if c.IdleTimeout == 0 {
-		c.IdleTimeout = DefaultIdleTimeout
-	}
-
-	if c.MaxRetries == -1 {
-		c.MaxRetries = 0
-	} else if c.MaxRetries == 0 {
-		c.MaxRetries = DefaultMaxRetries
-	}
-	switch c.MinRetryBackoff {
-	case -1:
-		c.MinRetryBackoff = 0
-	case 0:
-		c.MinRetryBackoff = DefaultMinRetryBackoff
-	}
-	switch c.MaxRetryBackoff {
-	case -1:
-		c.MaxRetryBackoff = 0
-	case 0:
-		c.MaxRetryBackoff = DefaultMaxRetryBackoff
-	}
-
-	return nil
-}
+func (c *Client) Sanitize() error { _ = "STUB: not implemented"; return nil }
 
 // Validate finds errors in the current configuration.
-func (c *Client) Validate() error {
-	if err := c.Authentication.Validate(); err != nil {
-		return fmt.Errorf("failed to validate authentication configuration: %w", err)
-	}
-	return nil
-}
+func (c *Client) Validate() error { _ = "STUB: not implemented"; return nil }
 
 func (c *Client) RedisOptions() *redis.Options {
+	_ = "STUB: not implemented"
 	// Note: IdleCheckFrequency is gone since go-redis no longer checks idle connections.
 	// See https://github.com/redis/go-redis/discussions/2635
-	options := &redis.Options{
-		Network:         "tcp",
-		Dialer:          c.Dialer,
-		OnConnect:       c.OnConnect,
-		MaxRetries:      c.MaxRetries,
-		MinRetryBackoff: c.MinRetryBackoff,
-		MaxRetryBackoff: c.MaxRetryBackoff,
-		DialTimeout:     c.DialTimeout,
-		ReadTimeout:     c.ReadTimeout,
-		WriteTimeout:    c.WriteTimeout,
-		PoolFIFO:        c.PoolFIFO,
-		PoolSize:        c.PoolSize,
-		MinIdleConns:    c.MinIdleConns,
-		ConnMaxLifetime: c.MaxConnAge,
-		PoolTimeout:     c.PoolTimeout,
-		ConnMaxIdleTime: c.IdleTimeout,
-		TLSConfig:       c.TLSConfig,
-		Limiter:         c.Limiter,
-	}
-	if c.Authentication.Enabled() {
-		options.Password = c.Authentication.Password
-	}
-	return options
+	return nil
 }
 
 // Interface guard

@@ -14,21 +14,13 @@
 
 package checkpoint
 
-import "sync/atomic"
-
 var (
 	required int32
 	passed   int32
 )
 
-func Add() {
-	atomic.AddInt32(&required, 1)
-}
+func Add() { _ = "STUB: not implemented"; return }
 
-func Pass() {
-	atomic.AddInt32(&passed, 1)
-}
+func Pass() { _ = "STUB: not implemented"; return }
 
-func AllPassed() bool {
-	return atomic.LoadInt32(&passed) == required
-}
+func AllPassed() bool { _ = "STUB: not implemented"; return false }

@@ -22,37 +22,10 @@ type Environment struct {
 	m map[string]interface{}
 }
 
-func New() *Environment {
-	return &Environment{
-		m: make(map[string]interface{}),
-	}
-}
+func New() *Environment { _ = "STUB: not implemented"; return nil }
 
-func (e *Environment) Get(key string) interface{} {
-	e.RLock()
-	defer e.RUnlock()
+func (e *Environment) Get(key string) interface{} { _ = "STUB: not implemented"; return nil }
 
-	value, ok := e.m[key]
-	if ok {
-		return value
-	}
-	return nil
-}
+func (e *Environment) Set(key string, value interface{}) { _ = "STUB: not implemented"; return }
 
-func (e *Environment) Set(key string, value interface{}) {
-	e.Lock()
-	defer e.Unlock()
-
-	e.m[key] = value
-}
-
-func (e *Environment) Clone() *Environment {
-	e.RLock()
-	defer e.RUnlock()
-
-	f := New()
-	for key, value := range e.m {
-		f.Set(key, value)
-	}
-	return f
-}
+func (e *Environment) Clone() *Environment { _ = "STUB: not implemented"; return nil }

@@ -14,11 +14,4 @@
 
 package routingtable
 
-import (
-	"github.com/olric-data/olric/internal/protocol"
-)
-
-func (r *RoutingTable) RegisterHandlers() {
-	r.server.ServeMux().HandleFunc(protocol.Internal.UpdateRouting, r.updateRoutingCommandHandler)
-	r.server.ServeMux().HandleFunc(protocol.Internal.LengthOfPart, r.lengthOfPartCommandHandler)
-}
+func (r *RoutingTable) RegisterHandlers() { _ = "STUB: not implemented"; return }

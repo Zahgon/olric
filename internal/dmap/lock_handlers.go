@@ -15,121 +15,25 @@
 package dmap
 
 import (
-	"encoding/hex"
-	"time"
-
-	"github.com/olric-data/olric/internal/protocol"
 	"github.com/tidwall/redcon"
 )
 
 func (s *Service) unlockCommandHandler(conn redcon.Conn, cmd redcon.Command) {
-	unlockCmd, err := protocol.ParseUnlockCommand(cmd)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	dm, err := s.getOrCreateDMap(unlockCmd.DMap)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-	token, err := hex.DecodeString(unlockCmd.Token)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	err = dm.Unlock(s.ctx, unlockCmd.Key, token)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	conn.WriteString(protocol.StatusOK)
+	_ = "STUB: not implemented"
+	return
 }
 
 func (s *Service) lockCommandHandler(conn redcon.Conn, cmd redcon.Command) {
-	lockCmd, err := protocol.ParseLockCommand(cmd)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	dm, err := s.getOrCreateDMap(lockCmd.DMap)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	var timeout = nilTimeout
-	switch {
-	case lockCmd.EX != 0:
-		timeout = time.Duration(lockCmd.EX * float64(time.Second))
-	case lockCmd.PX != 0:
-		timeout = time.Duration(lockCmd.PX * int64(time.Millisecond))
-	}
-
-	var deadline = time.Duration(lockCmd.Deadline * float64(time.Second))
-	token, err := dm.Lock(s.ctx, lockCmd.Key, timeout, deadline)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	conn.WriteString(hex.EncodeToString(token))
+	_ = "STUB: not implemented"
+	return
 }
 
 func (s *Service) lockLeaseCommandHandler(conn redcon.Conn, cmd redcon.Command) {
-	lockLeaseCmd, err := protocol.ParseLockLeaseCommand(cmd)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	dm, err := s.getOrCreateDMap(lockLeaseCmd.DMap)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	timeout := time.Duration(lockLeaseCmd.Timeout * float64(time.Second))
-	token, err := hex.DecodeString(lockLeaseCmd.Token)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-	err = dm.Lease(s.ctx, lockLeaseCmd.Key, token, timeout)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-	conn.WriteString(protocol.StatusOK)
+	_ = "STUB: not implemented"
+	return
 }
 
 func (s *Service) plockLeaseCommandHandler(conn redcon.Conn, cmd redcon.Command) {
-	plockLeaseCmd, err := protocol.ParsePLockLeaseCommand(cmd)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	dm, err := s.getOrCreateDMap(plockLeaseCmd.DMap)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	timeout := time.Duration(plockLeaseCmd.Timeout * int64(time.Millisecond))
-	token, err := hex.DecodeString(plockLeaseCmd.Token)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-	err = dm.Lease(s.ctx, plockLeaseCmd.Key, token, timeout)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-	conn.WriteString(protocol.StatusOK)
+	_ = "STUB: not implemented"
+	return
 }

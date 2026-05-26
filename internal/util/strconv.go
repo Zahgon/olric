@@ -26,20 +26,16 @@
 
 package util
 
-import "strconv"
-
-func Atoi(b []byte) (int, error) {
-	return strconv.Atoi(BytesToString(b))
-}
+func Atoi(b []byte) (int, error) { _ = "STUB: not implemented"; return 0, nil }
 
 func ParseInt(b []byte, base int, bitSize int) (int64, error) {
-	return strconv.ParseInt(BytesToString(b), base, bitSize)
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func ParseUint(b []byte, base int, bitSize int) (uint64, error) {
-	return strconv.ParseUint(BytesToString(b), base, bitSize)
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
-func ParseFloat(b []byte, bitSize int) (float64, error) {
-	return strconv.ParseFloat(BytesToString(b), bitSize)
-}
+func ParseFloat(b []byte, bitSize int) (float64, error) { _ = "STUB: not implemented"; return 0, nil }

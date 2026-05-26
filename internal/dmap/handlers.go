@@ -14,28 +14,4 @@
 
 package dmap
 
-import (
-	"github.com/olric-data/olric/internal/protocol"
-)
-
-func (s *Service) RegisterHandlers() {
-	s.server.ServeMux().HandleFunc(protocol.DMap.Put, s.putCommandHandler)
-	s.server.ServeMux().HandleFunc(protocol.DMap.Get, s.getCommandHandler)
-	s.server.ServeMux().HandleFunc(protocol.DMap.Del, s.delCommandHandler)
-	s.server.ServeMux().HandleFunc(protocol.DMap.DelEntry, s.delEntryCommandHandler)
-	s.server.ServeMux().HandleFunc(protocol.DMap.GetEntry, s.getEntryCommandHandler)
-	s.server.ServeMux().HandleFunc(protocol.DMap.PutEntry, s.putEntryCommandHandler)
-	s.server.ServeMux().HandleFunc(protocol.DMap.Expire, s.expireCommandHandler)
-	s.server.ServeMux().HandleFunc(protocol.DMap.PExpire, s.pexpireCommandHandler)
-	s.server.ServeMux().HandleFunc(protocol.DMap.Destroy, s.destroyCommandHandler)
-	s.server.ServeMux().HandleFunc(protocol.DMap.Scan, s.scanCommandHandler)
-	s.server.ServeMux().HandleFunc(protocol.DMap.Incr, s.incrCommandHandler)
-	s.server.ServeMux().HandleFunc(protocol.DMap.Decr, s.decrCommandHandler)
-	s.server.ServeMux().HandleFunc(protocol.DMap.GetPut, s.getPutCommandHandler)
-	s.server.ServeMux().HandleFunc(protocol.DMap.IncrByFloat, s.incrByFloatCommandHandler)
-	s.server.ServeMux().HandleFunc(protocol.DMap.Lock, s.lockCommandHandler)
-	s.server.ServeMux().HandleFunc(protocol.DMap.Unlock, s.unlockCommandHandler)
-	s.server.ServeMux().HandleFunc(protocol.DMap.LockLease, s.lockLeaseCommandHandler)
-	s.server.ServeMux().HandleFunc(protocol.DMap.PLockLease, s.plockLeaseCommandHandler)
-	s.server.ServeMux().HandleFunc(protocol.Internal.MoveFragment, s.moveFragmentCommandHandler)
-}
+func (s *Service) RegisterHandlers() { _ = "STUB: not implemented"; return }

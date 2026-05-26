@@ -14,109 +14,25 @@
 
 package dmap
 
-import (
-	"context"
-	"runtime"
-	"strings"
-	"sync"
-	"time"
-
-	"github.com/olric-data/olric/internal/cluster/partitions"
-	"golang.org/x/sync/semaphore"
-)
-
 func (s *Service) callCompactionOnFragment(f *fragment) bool {
-	for {
-		f.Lock()
-		done, err := f.Compaction()
-		if err != nil {
-			f.Unlock()
-			// Continue
-			return true
-		}
-		f.Unlock()
-
-		if done {
-			return true
-		}
-
-		select {
-		case <-s.ctx.Done():
-			// Break
-			return false
-		case <-time.After(time.Millisecond):
-		}
-	}
+	_ = "STUB: not implemented"
+	return false
 }
 
-func (s *Service) doCompaction(partID uint64) {
-	compaction := func(part *partitions.Partition) {
-		part.Map().Range(func(name, tmp interface{}) bool {
-			if !strings.HasPrefix(name.(string), "dmap.") {
-				// Continue. This fragment belongs to a different data structure.
-				return true
-			}
+// Continue
 
-			f := tmp.(*fragment)
-			return s.callCompactionOnFragment(f)
-		})
-	}
+// Break
 
-	part := s.primary.PartitionByID(partID)
-	compaction(part)
+func (s *Service) doCompaction(partID uint64) { _ = "STUB: not implemented"; return }
 
-	backup := s.backup.PartitionByID(partID)
-	compaction(backup)
-}
+// Continue. This fragment belongs to a different data structure.
 
-func (s *Service) triggerCompaction() {
-	var wg sync.WaitGroup
+func (s *Service) triggerCompaction() { _ = "STUB: not implemented"; return }
 
-	// NumCPU returns the number of logical CPUs usable by the current process.
-	//
-	// The set of available CPUs is checked by querying the operating system
-	// at process startup. Changes to operating system CPU allocation after
-	// process startup are not reflected.
-	numWorkers := runtime.NumCPU()
-	sem := semaphore.NewWeighted(int64(numWorkers))
-	for partID := uint64(0); partID < s.config.PartitionCount; partID++ {
-		select {
-		case <-s.ctx.Done():
-			break
-		default:
-		}
+// NumCPU returns the number of logical CPUs usable by the current process.
+//
+// The set of available CPUs is checked by querying the operating system
+// at process startup. Changes to operating system CPU allocation after
+// process startup are not reflected.
 
-		if err := sem.Acquire(s.ctx, 1); err != nil {
-			if err != context.Canceled {
-				s.log.V(3).Printf("[ERROR] Failed to acquire semaphore for DMap compaction: %v", err)
-			}
-			continue
-		}
-
-		wg.Add(1)
-		go func(id uint64) {
-			defer wg.Done()
-			defer sem.Release(1)
-			s.doCompaction(id)
-		}(partID)
-	}
-
-	wg.Wait()
-}
-
-func (s *Service) compactionWorker() {
-	defer s.wg.Done()
-
-	timer := time.NewTimer(s.config.DMaps.TriggerCompactionInterval)
-	defer timer.Stop()
-
-	for {
-		timer.Reset(s.config.DMaps.TriggerCompactionInterval)
-		select {
-		case <-timer.C:
-			s.triggerCompaction()
-		case <-s.ctx.Done():
-			return
-		}
-	}
-}
+func (s *Service) compactionWorker() { _ = "STUB: not implemented"; return }

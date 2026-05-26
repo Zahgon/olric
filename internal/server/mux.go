@@ -23,11 +23,7 @@ package server
 
 import (
 	"errors"
-	"fmt"
-	"strings"
 
-	"github.com/olric-data/olric/internal/protocol"
-	"github.com/olric-data/olric/internal/util"
 	"github.com/tidwall/redcon"
 )
 
@@ -41,67 +37,23 @@ type ServeMux struct {
 }
 
 // NewServeMux allocates and returns a new ServeMux.
-func NewServeMux(c *Config) *ServeMux {
-	protocol.SetError("NOAUTH", errAuthRequired)
-	return &ServeMux{
-		config:   c,
-		handlers: make(map[string]redcon.Handler),
-	}
-}
+func NewServeMux(c *Config) *ServeMux { _ = "STUB: not implemented"; return nil }
 
 // HandleFunc registers the handler function for the given command.
 func (m *ServeMux) HandleFunc(command string, handler redcon.Handler) {
-	if handler == nil {
-		panic("olric: nil handler")
-	}
-	m.Handle(command, handler)
+	_ = "STUB: not implemented"
+	return
 }
 
 // Handle registers the handler for the given command.
 // If a handler already exists for command, Handle panics.
 func (m *ServeMux) Handle(command string, handler redcon.Handler) {
-	if command == "" {
-		panic("olric: invalid command")
-	}
-	if handler == nil {
-		panic("olric: nil handler")
-	}
-	if _, exist := m.handlers[command]; exist {
-		panic("olric: multiple registrations for " + command)
-	}
-
-	m.handlers[command] = handler
+	_ = "STUB: not implemented"
+	return
 }
 
 // ServeRESP dispatches the command to the handler.
 func (m *ServeMux) ServeRESP(conn redcon.Conn, cmd redcon.Command) {
-	command := strings.ToLower(util.BytesToString(cmd.Args[0]))
-
-	if m.config.RequireAuth && command != protocol.Generic.Auth {
-		ctx := conn.Context().(*ConnContext)
-		if !ctx.IsAuthenticated() {
-			protocol.WriteError(conn, errAuthRequired)
-			return
-		}
-	}
-
-	if handler, ok := m.handlers[command]; ok {
-		handler.ServeRESP(conn, cmd)
-		return
-	}
-
-	if command == protocol.PubSub.PubSub {
-		if len(cmd.Args) < 2 {
-			protocol.WriteError(conn, fmt.Errorf("wrong number of arguments for '%s' command", command))
-			return
-		}
-		command = fmt.Sprintf("%s %s", command, util.BytesToString(cmd.Args[1]))
-	}
-
-	if handler, ok := m.handlers[command]; ok {
-		handler.ServeRESP(conn, cmd)
-		return
-	}
-
-	protocol.WriteError(conn, fmt.Errorf("unknown command '%s'", command))
+	_ = "STUB: not implemented"
+	return
 }

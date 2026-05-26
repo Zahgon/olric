@@ -16,13 +16,8 @@ package protocol
 
 import (
 	"context"
-	"errors"
-	"fmt"
-	"strconv"
-	"strings"
 	"time"
 
-	"github.com/olric-data/olric/internal/util"
 	"github.com/redis/go-redis/v9"
 	"github.com/tidwall/redcon"
 )
@@ -39,143 +34,27 @@ type Put struct {
 	XX    bool
 }
 
-func NewPut(dmap, key string, value []byte) *Put {
-	return &Put{
-		DMap:  dmap,
-		Key:   key,
-		Value: value,
-	}
-}
+func NewPut(dmap, key string, value []byte) *Put { _ = "STUB: not implemented"; return nil }
 
-func (p *Put) SetEX(ex float64) *Put {
-	p.EX = ex
-	return p
-}
+func (p *Put) SetEX(ex float64) *Put { _ = "STUB: not implemented"; return nil }
 
-func (p *Put) SetPX(px int64) *Put {
-	p.PX = px
-	return p
-}
+func (p *Put) SetPX(px int64) *Put { _ = "STUB: not implemented"; return nil }
 
-func (p *Put) SetEXAT(exat float64) *Put {
-	p.EXAT = exat
-	return p
-}
+func (p *Put) SetEXAT(exat float64) *Put { _ = "STUB: not implemented"; return nil }
 
-func (p *Put) SetPXAT(pxat int64) *Put {
-	p.PXAT = pxat
-	return p
-}
+func (p *Put) SetPXAT(pxat int64) *Put { _ = "STUB: not implemented"; return nil }
 
-func (p *Put) SetNX() *Put {
-	p.NX = true
-	return p
-}
+func (p *Put) SetNX() *Put { _ = "STUB: not implemented"; return nil }
 
-func (p *Put) SetXX() *Put {
-	p.XX = true
-	return p
-}
+func (p *Put) SetXX() *Put { _ = "STUB: not implemented"; return nil }
 
-func (p *Put) Command(ctx context.Context) *redis.StatusCmd {
-	var args []interface{}
-	args = append(args, DMap.Put)
-	args = append(args, p.DMap)
-	args = append(args, p.Key)
-	args = append(args, p.Value)
+func (p *Put) Command(ctx context.Context) *redis.StatusCmd { _ = "STUB: not implemented"; return nil }
 
-	if p.EX != 0 {
-		args = append(args, "EX")
-		args = append(args, p.EX)
-	}
+func ParsePutCommand(cmd redcon.Command) (*Put, error) { _ = "STUB: not implemented"; return nil, nil }
 
-	if p.PX != 0 {
-		args = append(args, "PX")
-		args = append(args, p.PX)
-	}
-
-	if p.EXAT != 0 {
-		args = append(args, "EXAT")
-		args = append(args, p.EXAT)
-	}
-
-	if p.PXAT != 0 {
-		args = append(args, "PXAT")
-		args = append(args, p.PXAT)
-	}
-
-	if p.NX {
-		args = append(args, "NX")
-	}
-
-	if p.XX {
-		args = append(args, "XX")
-	}
-
-	return redis.NewStatusCmd(ctx, args...)
-}
-
-func ParsePutCommand(cmd redcon.Command) (*Put, error) {
-	if len(cmd.Args) < 4 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	p := NewPut(
-		util.BytesToString(cmd.Args[1]), // DMap
-		util.BytesToString(cmd.Args[2]), // Key
-		cmd.Args[3],                     // Value
-	)
-
-	args := cmd.Args[4:]
-	for len(args) > 0 {
-		switch arg := strings.ToUpper(util.BytesToString(args[0])); arg {
-		case "NX":
-			p.SetNX()
-			args = args[1:]
-			continue
-		case "XX":
-			p.SetXX()
-			args = args[1:]
-			continue
-		case "PX":
-			px, err := strconv.ParseInt(util.BytesToString(args[1]), 10, 64)
-			if err != nil {
-				return nil, err
-			}
-			p.SetPX(px)
-			args = args[2:]
-			continue
-		case "EX":
-			ex, err := strconv.ParseFloat(util.BytesToString(args[1]), 64)
-			if err != nil {
-				return nil, err
-			}
-			p.SetEX(ex)
-			args = args[2:]
-			continue
-		case "EXAT":
-			exat, err := strconv.ParseFloat(util.BytesToString(args[1]), 64)
-			if err != nil {
-				return nil, err
-			}
-			p.SetEXAT(exat)
-			args = args[2:]
-			continue
-		case "PXAT":
-			pxat, err := strconv.ParseInt(util.BytesToString(args[1]), 10, 64)
-			if err != nil {
-				return nil, err
-			}
-			p.SetPXAT(pxat)
-			args = args[2:]
-			continue
-		default:
-			return nil, errors.New("syntax error")
-		}
-	}
-
-	return p, nil
-}
+// DMap
+// Key
+// Value
 
 type PutEntry struct {
 	DMap  string
@@ -183,33 +62,16 @@ type PutEntry struct {
 	Value []byte
 }
 
-func NewPutEntry(dmap, key string, value []byte) *PutEntry {
-	return &PutEntry{
-		DMap:  dmap,
-		Key:   key,
-		Value: value,
-	}
-}
+func NewPutEntry(dmap, key string, value []byte) *PutEntry { _ = "STUB: not implemented"; return nil }
 
 func (p *PutEntry) Command(ctx context.Context) *redis.StatusCmd {
-	var args []interface{}
-	args = append(args, DMap.PutEntry)
-	args = append(args, p.DMap)
-	args = append(args, p.Key)
-	args = append(args, p.Value)
-	return redis.NewStatusCmd(ctx, args...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ParsePutEntryCommand(cmd redcon.Command) (*PutEntry, error) {
-	if len(cmd.Args) < 4 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	return NewPutEntry(
-		util.BytesToString(cmd.Args[1]),
-		util.BytesToString(cmd.Args[2]),
-		cmd.Args[3],
-	), nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 type Get struct {
@@ -218,50 +80,13 @@ type Get struct {
 	Raw  bool
 }
 
-func NewGet(dmap, key string) *Get {
-	return &Get{
-		DMap: dmap,
-		Key:  key,
-	}
-}
+func NewGet(dmap, key string) *Get { _ = "STUB: not implemented"; return nil }
 
-func (g *Get) SetRaw() *Get {
-	g.Raw = true
-	return g
-}
+func (g *Get) SetRaw() *Get { _ = "STUB: not implemented"; return nil }
 
-func (g *Get) Command(ctx context.Context) *redis.StringCmd {
-	var args []interface{}
-	args = append(args, DMap.Get)
-	args = append(args, g.DMap)
-	args = append(args, g.Key)
-	if g.Raw {
-		args = append(args, "RW")
-	}
-	return redis.NewStringCmd(ctx, args...)
-}
+func (g *Get) Command(ctx context.Context) *redis.StringCmd { _ = "STUB: not implemented"; return nil }
 
-func ParseGetCommand(cmd redcon.Command) (*Get, error) {
-	if len(cmd.Args) < 3 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	g := NewGet(
-		util.BytesToString(cmd.Args[1]),
-		util.BytesToString(cmd.Args[2]),
-	)
-
-	if len(cmd.Args) == 4 {
-		arg := util.BytesToString(cmd.Args[3])
-		if arg == "RW" {
-			g.SetRaw()
-		} else {
-			return nil, fmt.Errorf("%w: %s", ErrInvalidArgument, arg)
-		}
-	}
-
-	return g, nil
-}
+func ParseGetCommand(cmd redcon.Command) (*Get, error) { _ = "STUB: not implemented"; return nil, nil }
 
 type GetEntry struct {
 	DMap    string
@@ -269,133 +94,51 @@ type GetEntry struct {
 	Replica bool
 }
 
-func NewGetEntry(dmap, key string) *GetEntry {
-	return &GetEntry{
-		DMap: dmap,
-		Key:  key,
-	}
-}
+func NewGetEntry(dmap, key string) *GetEntry { _ = "STUB: not implemented"; return nil }
 
-func (g *GetEntry) SetReplica() *GetEntry {
-	g.Replica = true
-	return g
-}
+func (g *GetEntry) SetReplica() *GetEntry { _ = "STUB: not implemented"; return nil }
 
 func (g *GetEntry) Command(ctx context.Context) *redis.StringCmd {
-	var args []interface{}
-	args = append(args, DMap.GetEntry)
-	args = append(args, g.DMap)
-	args = append(args, g.Key)
-	if g.Replica {
-		args = append(args, "RC")
-	}
-	return redis.NewStringCmd(ctx, args...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ParseGetEntryCommand(cmd redcon.Command) (*GetEntry, error) {
-	if len(cmd.Args) < 2 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	g := NewGetEntry(
-		util.BytesToString(cmd.Args[1]), // DMap
-		util.BytesToString(cmd.Args[2]), // Key
-	)
-
-	if len(cmd.Args) == 4 {
-		arg := util.BytesToString(cmd.Args[3])
-		if arg == "RC" {
-			g.SetReplica()
-		} else {
-			return nil, fmt.Errorf("%w: %s", ErrInvalidArgument, arg)
-		}
-	}
-
-	return g, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// DMap
+// Key
 
 type Del struct {
 	DMap string
 	Keys []string
 }
 
-func NewDel(dmap string, keys ...string) *Del {
-	return &Del{
-		DMap: dmap,
-		Keys: keys,
-	}
-}
+func NewDel(dmap string, keys ...string) *Del { _ = "STUB: not implemented"; return nil }
 
-func (d *Del) Command(ctx context.Context) *redis.IntCmd {
-	var args []interface{}
-	args = append(args, DMap.Del)
-	args = append(args, d.DMap)
-	for _, key := range d.Keys {
-		args = append(args, key)
-	}
-	return redis.NewIntCmd(ctx, args...)
-}
+func (d *Del) Command(ctx context.Context) *redis.IntCmd { _ = "STUB: not implemented"; return nil }
 
-func ParseDelCommand(cmd redcon.Command) (*Del, error) {
-	if len(cmd.Args) < 3 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	d := NewDel(
-		util.BytesToString(cmd.Args[1]),
-	)
-	for _, key := range cmd.Args[2:] {
-		d.Keys = append(d.Keys, util.BytesToString(key))
-	}
-	return d, nil
-}
+func ParseDelCommand(cmd redcon.Command) (*Del, error) { _ = "STUB: not implemented"; return nil, nil }
 
 type DelEntry struct {
 	Del     *Del
 	Replica bool
 }
 
-func NewDelEntry(dmap, key string) *DelEntry {
-	return &DelEntry{
-		Del: NewDel(dmap, key),
-	}
-}
+func NewDelEntry(dmap, key string) *DelEntry { _ = "STUB: not implemented"; return nil }
 
-func (d *DelEntry) SetReplica() *DelEntry {
-	d.Replica = true
-	return d
-}
+func (d *DelEntry) SetReplica() *DelEntry { _ = "STUB: not implemented"; return nil }
 
 func (d *DelEntry) Command(ctx context.Context) *redis.IntCmd {
-	cmd := d.Del.Command(ctx)
-	args := cmd.Args()
-	args[0] = DMap.DelEntry
-	if d.Replica {
-		args = append(args, "RC")
-	}
-	return redis.NewIntCmd(ctx, args...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ParseDelEntryCommand(cmd redcon.Command) (*DelEntry, error) {
-	if len(cmd.Args) < 3 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	d := NewDelEntry(
-		util.BytesToString(cmd.Args[1]),
-		util.BytesToString(cmd.Args[2]),
-	)
-
-	if len(cmd.Args) == 4 {
-		arg := util.BytesToString(cmd.Args[3])
-		if arg == "RC" {
-			d.SetReplica()
-		} else {
-			return nil, fmt.Errorf("%w: %s", ErrInvalidArgument, arg)
-		}
-	}
-
-	return d, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 type PExpire struct {
@@ -405,39 +148,22 @@ type PExpire struct {
 }
 
 func NewPExpire(dmap, key string, milliseconds time.Duration) *PExpire {
-	return &PExpire{
-		DMap:         dmap,
-		Key:          key,
-		Milliseconds: milliseconds,
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (p *PExpire) Command(ctx context.Context) *redis.StatusCmd {
-	var args []interface{}
-	args = append(args, DMap.PExpire)
-	args = append(args, p.DMap)
-	args = append(args, p.Key)
-	args = append(args, p.Milliseconds.Milliseconds())
-	return redis.NewStatusCmd(ctx, args...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ParsePExpireCommand(cmd redcon.Command) (*PExpire, error) {
-	if len(cmd.Args) < 4 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	rawMilliseconds := util.BytesToString(cmd.Args[3])
-	milliseconds, err := strconv.ParseInt(rawMilliseconds, 10, 64)
-	if err != nil {
-		return nil, err
-	}
-	p := NewPExpire(
-		util.BytesToString(cmd.Args[1]), // DMap
-		util.BytesToString(cmd.Args[2]), // Key
-		time.Duration(milliseconds*int64(time.Millisecond)),
-	)
-	return p, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// DMap
+// Key
 
 type Expire struct {
 	DMap    string
@@ -446,85 +172,40 @@ type Expire struct {
 }
 
 func NewExpire(dmap, key string, seconds time.Duration) *Expire {
-	return &Expire{
-		DMap:    dmap,
-		Key:     key,
-		Seconds: seconds,
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (e *Expire) Command(ctx context.Context) *redis.StatusCmd {
-	var args []interface{}
-	args = append(args, DMap.Expire)
-	args = append(args, e.DMap)
-	args = append(args, e.Key)
-	args = append(args, e.Seconds.Seconds())
-	return redis.NewStatusCmd(ctx, args...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ParseExpireCommand(cmd redcon.Command) (*Expire, error) {
-	if len(cmd.Args) < 4 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	rawSeconds := util.BytesToString(cmd.Args[3])
-	seconds, err := strconv.ParseFloat(rawSeconds, 64)
-	if err != nil {
-		return nil, err
-	}
-	e := NewExpire(
-		util.BytesToString(cmd.Args[1]), // DMap
-		util.BytesToString(cmd.Args[2]), // Key
-		time.Duration(seconds*float64(time.Second)),
-	)
-	return e, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// DMap
+// Key
 
 type Destroy struct {
 	DMap  string
 	Local bool
 }
 
-func NewDestroy(dmap string) *Destroy {
-	return &Destroy{
-		DMap: dmap,
-	}
-}
+func NewDestroy(dmap string) *Destroy { _ = "STUB: not implemented"; return nil }
 
-func (d *Destroy) SetLocal() *Destroy {
-	d.Local = true
-	return d
-}
+func (d *Destroy) SetLocal() *Destroy { _ = "STUB: not implemented"; return nil }
 
 func (d *Destroy) Command(ctx context.Context) *redis.StatusCmd {
-	var args []interface{}
-	args = append(args, DMap.Destroy)
-	args = append(args, d.DMap)
-	if d.Local {
-		args = append(args, "LC")
-	}
-	return redis.NewStatusCmd(ctx, args...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ParseDestroyCommand(cmd redcon.Command) (*Destroy, error) {
-	if len(cmd.Args) < 2 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	d := NewDestroy(
-		util.BytesToString(cmd.Args[1]),
-	)
-
-	if len(cmd.Args) == 3 {
-		arg := util.BytesToString(cmd.Args[2])
-		if arg == "LC" {
-			d.SetLocal()
-		} else {
-			return nil, fmt.Errorf("%w: %s", ErrInvalidArgument, arg)
-		}
-	}
-
-	return d, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 type Scan struct {
@@ -537,100 +218,26 @@ type Scan struct {
 }
 
 func NewScan(partID uint64, dmap string, cursor uint64) *Scan {
-	return &Scan{
-		PartID: partID,
-		DMap:   dmap,
-		Cursor: cursor,
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
-func (s *Scan) SetMatch(match string) *Scan {
-	s.Match = match
-	return s
-}
+func (s *Scan) SetMatch(match string) *Scan { _ = "STUB: not implemented"; return nil }
 
-func (s *Scan) SetCount(count int) *Scan {
-	s.Count = count
-	return s
-}
+func (s *Scan) SetCount(count int) *Scan { _ = "STUB: not implemented"; return nil }
 
-func (s *Scan) SetReplica() *Scan {
-	s.Replica = true
-	return s
-}
+func (s *Scan) SetReplica() *Scan { _ = "STUB: not implemented"; return nil }
 
-func (s *Scan) Command(ctx context.Context) *redis.ScanCmd {
-	var args []interface{}
-	args = append(args, DMap.Scan)
-	args = append(args, s.PartID)
-	args = append(args, s.DMap)
-	args = append(args, s.Cursor)
-	if s.Match != "" {
-		args = append(args, "MATCH")
-		args = append(args, s.Match)
-	}
-	if s.Count != 0 {
-		args = append(args, "COUNT")
-		args = append(args, s.Count)
-	}
-	if s.Replica {
-		args = append(args, "RC")
-	}
-	return redis.NewScanCmd(ctx, nil, args...)
-}
+func (s *Scan) Command(ctx context.Context) *redis.ScanCmd { _ = "STUB: not implemented"; return nil }
 
 const DefaultScanCount = 10
 
 func ParseScanCommand(cmd redcon.Command) (*Scan, error) {
-	if len(cmd.Args) < 4 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	rawPartID := util.BytesToString(cmd.Args[1])
-	partID, err := strconv.ParseUint(rawPartID, 10, 64)
-	if err != nil {
-		return nil, err
-	}
-
-	rawCursor := util.BytesToString(cmd.Args[3])
-	cursor, err := strconv.ParseUint(rawCursor, 10, 64)
-	if err != nil {
-		return nil, err
-	}
-
-	s := NewScan(
-		partID,
-		util.BytesToString(cmd.Args[2]), // DMap
-		cursor,
-	)
-
-	args := cmd.Args[4:]
-	for len(args) > 0 {
-		switch arg := strings.ToUpper(util.BytesToString(args[0])); arg {
-		case "MATCH":
-			s.SetMatch(util.BytesToString(args[1]))
-			args = args[2:]
-			continue
-		case "COUNT":
-			count, err := strconv.Atoi(util.BytesToString(args[1]))
-			if err != nil {
-				return nil, err
-			}
-			s.SetCount(count)
-			args = args[2:]
-			continue
-		case "RC":
-			s.SetReplica()
-			args = args[1:]
-		}
-	}
-
-	if s.Count == 0 {
-		s.SetCount(DefaultScanCount)
-	}
-
-	return s, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// DMap
 
 type Incr struct {
 	DMap  string
@@ -638,71 +245,26 @@ type Incr struct {
 	Delta int
 }
 
-func NewIncr(dmap, key string, delta int) *Incr {
-	return &Incr{
-		DMap:  dmap,
-		Key:   key,
-		Delta: delta,
-	}
-}
+func NewIncr(dmap, key string, delta int) *Incr { _ = "STUB: not implemented"; return nil }
 
-func (i *Incr) Command(ctx context.Context) *redis.IntCmd {
-	var args []interface{}
-	args = append(args, DMap.Incr)
-	args = append(args, i.DMap)
-	args = append(args, i.Key)
-	args = append(args, i.Delta)
-	return redis.NewIntCmd(ctx, args...)
-}
+func (i *Incr) Command(ctx context.Context) *redis.IntCmd { _ = "STUB: not implemented"; return nil }
 
 func ParseIncrCommand(cmd redcon.Command) (*Incr, error) {
-	if len(cmd.Args) < 4 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	delta, err := strconv.Atoi(util.BytesToString(cmd.Args[3]))
-	if err != nil {
-		return nil, err
-	}
-
-	return NewIncr(
-		util.BytesToString(cmd.Args[1]),
-		util.BytesToString(cmd.Args[2]),
-		delta,
-	), nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 type Decr struct {
 	*Incr
 }
 
-func NewDecr(dmap, key string, delta int) *Decr {
-	return &Decr{
-		NewIncr(dmap, key, delta),
-	}
-}
+func NewDecr(dmap, key string, delta int) *Decr { _ = "STUB: not implemented"; return nil }
 
-func (d *Decr) Command(ctx context.Context) *redis.IntCmd {
-	cmd := d.Incr.Command(ctx)
-	cmd.Args()[0] = DMap.Decr
-	return cmd
-}
+func (d *Decr) Command(ctx context.Context) *redis.IntCmd { _ = "STUB: not implemented"; return nil }
 
 func ParseDecrCommand(cmd redcon.Command) (*Decr, error) {
-	if len(cmd.Args) < 4 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	delta, err := strconv.Atoi(util.BytesToString(cmd.Args[3]))
-	if err != nil {
-		return nil, err
-	}
-
-	return NewDecr(
-		util.BytesToString(cmd.Args[1]),
-		util.BytesToString(cmd.Args[2]),
-		delta,
-	), nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 type GetPut struct {
@@ -712,52 +274,23 @@ type GetPut struct {
 	Raw   bool
 }
 
-func NewGetPut(dmap, key string, value []byte) *GetPut {
-	return &GetPut{
-		DMap:  dmap,
-		Key:   key,
-		Value: value,
-	}
-}
+func NewGetPut(dmap, key string, value []byte) *GetPut { _ = "STUB: not implemented"; return nil }
 
-func (g *GetPut) SetRaw() *GetPut {
-	g.Raw = true
-	return g
-}
+func (g *GetPut) SetRaw() *GetPut { _ = "STUB: not implemented"; return nil }
 
 func (g *GetPut) Command(ctx context.Context) *redis.StringCmd {
-	var args []interface{}
-	args = append(args, DMap.GetPut)
-	args = append(args, g.DMap)
-	args = append(args, g.Key)
-	args = append(args, g.Value)
-	if g.Raw {
-		args = append(args, "RW")
-	}
-	return redis.NewStringCmd(ctx, args...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ParseGetPutCommand(cmd redcon.Command) (*GetPut, error) {
-	if len(cmd.Args) < 4 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	g := NewGetPut(
-		util.BytesToString(cmd.Args[1]), // DMap
-		util.BytesToString(cmd.Args[2]), // Key
-		cmd.Args[3],                     // Value
-	)
-
-	if len(cmd.Args) == 5 {
-		arg := util.BytesToString(cmd.Args[4])
-		if arg == "RW" {
-			g.SetRaw()
-		} else {
-			return nil, fmt.Errorf("%w: %s", ErrInvalidArgument, arg)
-		}
-	}
-	return g, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// DMap
+// Key
+// Value
 
 type IncrByFloat struct {
 	DMap  string
@@ -766,37 +299,18 @@ type IncrByFloat struct {
 }
 
 func NewIncrByFloat(dmap, key string, delta float64) *IncrByFloat {
-	return &IncrByFloat{
-		DMap:  dmap,
-		Key:   key,
-		Delta: delta,
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (i *IncrByFloat) Command(ctx context.Context) *redis.FloatCmd {
-	var args []interface{}
-	args = append(args, DMap.IncrByFloat)
-	args = append(args, i.DMap)
-	args = append(args, i.Key)
-	args = append(args, i.Delta)
-	return redis.NewFloatCmd(ctx, args...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ParseIncrByFloatCommand(cmd redcon.Command) (*IncrByFloat, error) {
-	if len(cmd.Args) < 4 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	delta, err := strconv.ParseFloat(util.BytesToString(cmd.Args[3]), 10)
-	if err != nil {
-		return nil, err
-	}
-
-	return NewIncrByFloat(
-		util.BytesToString(cmd.Args[1]),
-		util.BytesToString(cmd.Args[2]),
-		delta,
-	), nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 type Lock struct {
@@ -807,87 +321,26 @@ type Lock struct {
 	PX       int64
 }
 
-func NewLock(dmap, key string, deadline float64) *Lock {
-	return &Lock{
-		DMap:     dmap,
-		Key:      key,
-		Deadline: deadline,
-	}
-}
+func NewLock(dmap, key string, deadline float64) *Lock { _ = "STUB: not implemented"; return nil }
 
-func (l *Lock) SetEX(ex float64) *Lock {
-	l.EX = ex
-	return l
-}
+func (l *Lock) SetEX(ex float64) *Lock { _ = "STUB: not implemented"; return nil }
 
-func (l *Lock) SetPX(px int64) *Lock {
-	l.PX = px
-	return l
-}
+func (l *Lock) SetPX(px int64) *Lock { _ = "STUB: not implemented"; return nil }
 
-func (l *Lock) Command(ctx context.Context) *redis.StringCmd {
-	var args []interface{}
-	args = append(args, DMap.Lock)
-	args = append(args, l.DMap)
-	args = append(args, l.Key)
-	args = append(args, l.Deadline)
+func (l *Lock) Command(ctx context.Context) *redis.StringCmd { _ = "STUB: not implemented"; return nil }
 
-	// Options
-	if l.EX != 0 {
-		args = append(args, "EX")
-		args = append(args, l.EX)
-	}
-
-	if l.PX != 0 {
-		args = append(args, "PX")
-		args = append(args, l.PX)
-	}
-
-	return redis.NewStringCmd(ctx, args...)
-}
+// Options
 
 func ParseLockCommand(cmd redcon.Command) (*Lock, error) {
-	if len(cmd.Args) < 4 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	deadline, err := strconv.ParseFloat(util.BytesToString(cmd.Args[3]), 64)
-	if err != nil {
-		return nil, err
-	}
-
-	l := NewLock(
-		util.BytesToString(cmd.Args[1]), // DMap
-		util.BytesToString(cmd.Args[2]), // Key
-		deadline,                        // Deadline
-	)
-
-	// EX or PX are optional.
-	if len(cmd.Args) > 4 {
-		if len(cmd.Args) == 5 {
-			return nil, fmt.Errorf("%w: %s needs a numerical argument", ErrInvalidArgument, util.BytesToString(cmd.Args[5]))
-		}
-
-		switch arg := strings.ToUpper(util.BytesToString(cmd.Args[4])); arg {
-		case "PX":
-			px, err := strconv.ParseInt(util.BytesToString(cmd.Args[5]), 10, 64)
-			if err != nil {
-				return nil, err
-			}
-			l.PX = px
-		case "EX":
-			ex, err := strconv.ParseFloat(util.BytesToString(cmd.Args[5]), 64)
-			if err != nil {
-				return nil, err
-			}
-			l.EX = ex
-		default:
-			return nil, fmt.Errorf("%w: %s", ErrInvalidArgument, arg)
-		}
-	}
-
-	return l, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// DMap
+// Key
+// Deadline
+
+// EX or PX are optional.
 
 type Unlock struct {
 	DMap  string
@@ -895,34 +348,21 @@ type Unlock struct {
 	Token string
 }
 
-func NewUnlock(dmap, key, token string) *Unlock {
-	return &Unlock{
-		DMap:  dmap,
-		Key:   key,
-		Token: token,
-	}
-}
+func NewUnlock(dmap, key, token string) *Unlock { _ = "STUB: not implemented"; return nil }
 
 func (u *Unlock) Command(ctx context.Context) *redis.StatusCmd {
-	var args []interface{}
-	args = append(args, DMap.Unlock)
-	args = append(args, u.DMap)
-	args = append(args, u.Key)
-	args = append(args, u.Token)
-	return redis.NewStatusCmd(ctx, args...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ParseUnlockCommand(cmd redcon.Command) (*Unlock, error) {
-	if len(cmd.Args) < 4 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	return NewUnlock(
-		util.BytesToString(cmd.Args[1]), // DMap
-		util.BytesToString(cmd.Args[2]), // Key
-		util.BytesToString(cmd.Args[3]), // Token
-	), nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// DMap
+// Key
+// Token
 
 type LockLease struct {
 	DMap    string
@@ -932,41 +372,24 @@ type LockLease struct {
 }
 
 func NewLockLease(dmap, key, token string, timeout float64) *LockLease {
-	return &LockLease{
-		DMap:    dmap,
-		Key:     key,
-		Token:   token,
-		Timeout: timeout,
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (l *LockLease) Command(ctx context.Context) *redis.StatusCmd {
-	var args []interface{}
-	args = append(args, DMap.LockLease)
-	args = append(args, l.DMap)
-	args = append(args, l.Key)
-	args = append(args, l.Token)
-	args = append(args, l.Timeout)
-	return redis.NewStatusCmd(ctx, args...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ParseLockLeaseCommand(cmd redcon.Command) (*LockLease, error) {
-	if len(cmd.Args) < 5 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	timeout, err := strconv.ParseFloat(util.BytesToString(cmd.Args[4]), 64)
-	if err != nil {
-		return nil, err
-	}
-
-	return NewLockLease(
-		util.BytesToString(cmd.Args[1]), // DMap
-		util.BytesToString(cmd.Args[2]), // Key
-		util.BytesToString(cmd.Args[3]), // Token
-		timeout,                         // Timeout
-	), nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// DMap
+// Key
+// Token
+// Timeout
 
 type PLockLease struct {
 	DMap    string
@@ -976,38 +399,21 @@ type PLockLease struct {
 }
 
 func NewPLockLease(dmap, key, token string, timeout int64) *PLockLease {
-	return &PLockLease{
-		DMap:    dmap,
-		Key:     key,
-		Token:   token,
-		Timeout: timeout,
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (p *PLockLease) Command(ctx context.Context) *redis.StatusCmd {
-	var args []interface{}
-	args = append(args, DMap.PLockLease)
-	args = append(args, p.DMap)
-	args = append(args, p.Key)
-	args = append(args, p.Token)
-	args = append(args, p.Timeout)
-	return redis.NewStatusCmd(ctx, args...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ParsePLockLeaseCommand(cmd redcon.Command) (*PLockLease, error) {
-	if len(cmd.Args) < 5 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	timeout, err := strconv.ParseInt(util.BytesToString(cmd.Args[4]), 10, 64)
-	if err != nil {
-		return nil, err
-	}
-
-	return NewPLockLease(
-		util.BytesToString(cmd.Args[1]), // DMap
-		util.BytesToString(cmd.Args[2]), // Key
-		util.BytesToString(cmd.Args[3]), // Token
-		timeout,                         // Timeout
-	), nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// DMap
+// Key
+// Token
+// Timeout

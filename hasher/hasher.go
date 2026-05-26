@@ -14,19 +14,13 @@
 
 package hasher
 
-import "github.com/cespare/xxhash/v2"
-
 // NewDefaultHasher returns an instance of xxhash package which implements the 64-bit variant of
 // xxHash (XXH64) as described at http://cyan4973.github.io/xxHash/.
-func NewDefaultHasher() Hasher {
-	return xxhasher{}
-}
+func NewDefaultHasher() Hasher { _ = "STUB: not implemented"; return *new(Hasher) }
 
 type xxhasher struct{}
 
-func (x xxhasher) Sum64(key []byte) uint64 {
-	return xxhash.Sum64(key)
-}
+func (x xxhasher) Sum64(key []byte) uint64 { _ = "STUB: not implemented"; return 0 }
 
 // Hasher is responsible for generating unsigned, 64 bit hash of provided byte slice.
 // Hasher should minimize collisions (generating same hash for different byte slice)

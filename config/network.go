@@ -15,12 +15,7 @@
 package config
 
 import (
-	"fmt"
 	"net"
-	"runtime"
-	"strconv"
-
-	"github.com/hashicorp/go-sockaddr"
 )
 
 // The following functions are mostly extracted from Serf. See setupAgent function in cmd/serf/command/agent/command.go
@@ -29,132 +24,32 @@ import (
 // Source: https://github.com/hashicorp/serf/blob/master/cmd/serf/command/agent/command.go#L204
 
 func addrParts(address string) (string, int, error) {
+	_ = "STUB: not implemented"
 	// Get the address
-	addr, err := net.ResolveTCPAddr("tcp", address)
-	if err != nil {
-		return "", 0, err
-	}
-
-	return addr.IP.String(), addr.Port, nil
+	return "", 0, nil
 }
 
 func getBindIPFromNetworkInterface(addrs []net.Addr) (string, error) {
-	for _, a := range addrs {
-		var addrIP net.IP
-		if runtime.GOOS == "windows" {
-			// Waiting for https://github.com/golang/go/issues/5395 to use IPNet only
-			addr, ok := a.(*net.IPAddr)
-			if !ok {
-				continue
-			}
-			addrIP = addr.IP
-		} else {
-			addr, ok := a.(*net.IPNet)
-			if !ok {
-				continue
-			}
-			addrIP = addr.IP
-		}
-
-		// Skip self-assigned IPs
-		if addrIP.IsLinkLocalUnicast() {
-			continue
-		}
-		return addrIP.String(), nil
-	}
-	return "", fmt.Errorf("failed to find usable address for interface")
+	_ = "STUB: not implemented"
+	return "", nil
 }
 
-func getBindIP(ifname, address string) (string, error) {
-	bindIP, _, err := addrParts(address)
-	if err != nil {
-		return "", fmt.Errorf("invalid BindAddr: %w", err)
-	}
+// Waiting for https://github.com/golang/go/issues/5395 to use IPNet only
 
-	// Check if we have an interface
-	if iface, _ := net.InterfaceByName(ifname); iface != nil {
-		addrs, err := iface.Addrs()
-		if err != nil {
-			return "", fmt.Errorf("failed to get interface addresses: %w", err)
-		}
-		if len(addrs) == 0 {
-			return "", fmt.Errorf("interface '%s' has no addresses", ifname)
-		}
+// Skip self-assigned IPs
 
-		// If there is no bind IP, pick an address
-		if bindIP == "0.0.0.0" {
-			addr, err := getBindIPFromNetworkInterface(addrs)
-			if err != nil {
-				return "", fmt.Errorf("ip scan on %s: %w", ifname, err)
-			}
-			return addr, nil
-		}
-		// If there is a bind IP, ensure it is available
-		for _, a := range addrs {
-			addr, ok := a.(*net.IPNet)
-			if !ok {
-				continue
-			}
-			if addr.IP.String() == bindIP {
-				return bindIP, nil
-			}
-		}
-		return "", fmt.Errorf("interface '%s' has no '%s' address", ifname, bindIP)
-	}
-	if bindIP == "0.0.0.0" {
-		// if we're not bound to a specific IP, let's use a suitable private IP address.
-		ipStr, err := sockaddr.GetPrivateIP()
-		if err != nil {
-			return "", fmt.Errorf("failed to get private interface addresses: %w", err)
-		}
+func getBindIP(ifname, address string) (string, error) { _ = "STUB: not implemented"; return "", nil }
 
-		// if we could not find a private address, we need to expand our search to a public
-		// ip address
-		if ipStr == "" {
-			ipStr, err = sockaddr.GetPublicIP()
-			if err != nil {
-				return "", fmt.Errorf("failed to get public interface addresses: %w", err)
-			}
-		}
+// Check if we have an interface
 
-		if ipStr == "" {
-			return "", fmt.Errorf("no private IP address found, and explicit IP not provided")
-		}
+// If there is no bind IP, pick an address
 
-		parsed := net.ParseIP(ipStr)
-		if parsed == nil {
-			return "", fmt.Errorf("failed to parse private IP address: %q", ipStr)
-		}
-		bindIP = parsed.String()
-	}
-	return bindIP, nil
-}
+// If there is a bind IP, ensure it is available
+
+// if we're not bound to a specific IP, let's use a suitable private IP address.
+
+// if we could not find a private address, we need to expand our search to a public
+// ip address
 
 // SetupNetworkConfig tries to find an appropriate bindIP to bind and propagate.
-func (c *Config) SetupNetworkConfig() (err error) {
-	address := net.JoinHostPort(c.BindAddr, strconv.Itoa(c.BindPort))
-	c.BindAddr, err = getBindIP(c.Interface, address)
-	if err != nil {
-		return err
-	}
-
-	address = net.JoinHostPort(c.MemberlistConfig.BindAddr, strconv.Itoa(c.MemberlistConfig.BindPort))
-	c.MemberlistConfig.BindAddr, err = getBindIP(c.MemberlistInterface, address)
-	if err != nil {
-		return err
-	}
-
-	if c.MemberlistConfig.AdvertiseAddr != "" {
-		advertisePort := c.MemberlistConfig.AdvertisePort
-		if advertisePort == 0 {
-			advertisePort = c.MemberlistConfig.BindPort
-		}
-		address := net.JoinHostPort(c.MemberlistConfig.AdvertiseAddr, strconv.Itoa(advertisePort))
-		advertiseAddr, _, err := addrParts(address)
-		if err != nil {
-			return err
-		}
-		c.MemberlistConfig.AdvertiseAddr = advertiseAddr
-	}
-	return nil
-}
+func (c *Config) SetupNetworkConfig() (err error) { _ = "STUB: not implemented"; return nil }

@@ -15,7 +15,6 @@
 package config
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -67,38 +66,9 @@ type DMap struct {
 }
 
 // Sanitize sets default values to empty configuration variables, if it's possible.
-func (dm *DMap) Sanitize() error {
-	if dm.EvictionPolicy == "" {
-		dm.EvictionPolicy = "NONE"
-	}
-	if dm.LRUSamples <= 0 {
-		dm.LRUSamples = DefaultLRUSamples
-	}
-	if dm.MaxInuse < 0 {
-		dm.MaxInuse = 0
-	}
-	if dm.MaxKeys < 0 {
-		dm.MaxKeys = 0
-	}
-
-	if dm.Engine == nil {
-		dm.Engine = NewEngine()
-	}
-
-	if err := dm.Engine.Sanitize(); err != nil {
-		return fmt.Errorf("failed to sanitize storage engine configuration: %w", err)
-	}
-
-	return nil
-}
+func (dm *DMap) Sanitize() error { _ = "STUB: not implemented"; return nil }
 
 // Validate finds errors in the current configuration.
-func (dm *DMap) Validate() error {
-	if err := dm.Engine.Validate(); err != nil {
-		return fmt.Errorf("failed to validate storage engine configuration: %w", err)
-	}
-
-	return nil
-}
+func (dm *DMap) Validate() error { _ = "STUB: not implemented"; return nil }
 
 var _ IConfig = (*DMap)(nil)

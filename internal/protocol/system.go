@@ -16,10 +16,7 @@ package protocol
 
 import (
 	"context"
-	"fmt"
-	"strconv"
 
-	"github.com/olric-data/olric/internal/util"
 	"github.com/redis/go-redis/v9"
 	"github.com/tidwall/redcon"
 )
@@ -28,59 +25,31 @@ type Ping struct {
 	Message string
 }
 
-func NewPing() *Ping {
-	return &Ping{}
-}
+func NewPing() *Ping { _ = "STUB: not implemented"; return nil }
 
-func (p *Ping) SetMessage(m string) *Ping {
-	p.Message = m
-	return p
-}
+func (p *Ping) SetMessage(m string) *Ping { _ = "STUB: not implemented"; return nil }
 
-func (p *Ping) Command(ctx context.Context) *redis.StringCmd {
-	var args []interface{}
-	args = append(args, Generic.Ping)
-	if p.Message != "" {
-		args = append(args, p.Message)
-	}
-	return redis.NewStringCmd(ctx, args...)
-}
+func (p *Ping) Command(ctx context.Context) *redis.StringCmd { _ = "STUB: not implemented"; return nil }
 
 func ParsePingCommand(cmd redcon.Command) (*Ping, error) {
-	if len(cmd.Args) < 1 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	p := NewPing()
-	if len(cmd.Args) == 2 {
-		p.SetMessage(util.BytesToString(cmd.Args[1]))
-	}
-	return p, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 type MoveFragment struct {
 	Payload []byte
 }
 
-func NewMoveFragment(payload []byte) *MoveFragment {
-	return &MoveFragment{
-		Payload: payload,
-	}
-}
+func NewMoveFragment(payload []byte) *MoveFragment { _ = "STUB: not implemented"; return nil }
 
 func (m *MoveFragment) Command(ctx context.Context) *redis.StatusCmd {
-	var args []interface{}
-	args = append(args, Internal.MoveFragment)
-	args = append(args, m.Payload)
-	return redis.NewStatusCmd(ctx, args...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ParseMoveFragmentCommand(cmd redcon.Command) (*MoveFragment, error) {
-	if len(cmd.Args) < 2 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	return NewMoveFragment(cmd.Args[1]), nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 type UpdateRouting struct {
@@ -89,30 +58,18 @@ type UpdateRouting struct {
 }
 
 func NewUpdateRouting(payload []byte, coordinatorID uint64) *UpdateRouting {
-	return &UpdateRouting{
-		Payload:       payload,
-		CoordinatorID: coordinatorID,
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (u *UpdateRouting) Command(ctx context.Context) *redis.StringCmd {
-	var args []interface{}
-	args = append(args, Internal.UpdateRouting)
-	args = append(args, u.Payload)
-	args = append(args, u.CoordinatorID)
-	return redis.NewStringCmd(ctx, args...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ParseUpdateRoutingCommand(cmd redcon.Command) (*UpdateRouting, error) {
-	if len(cmd.Args) < 2 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-	coordinatorID, err := strconv.ParseUint(util.BytesToString(cmd.Args[2]), 10, 64)
-	if err != nil {
-		return nil, err
-	}
-
-	return NewUpdateRouting(cmd.Args[1], coordinatorID), nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 type LengthOfPart struct {
@@ -120,87 +77,36 @@ type LengthOfPart struct {
 	Replica bool
 }
 
-func NewLengthOfPart(partID uint64) *LengthOfPart {
-	return &LengthOfPart{
-		PartID: partID,
-	}
-}
+func NewLengthOfPart(partID uint64) *LengthOfPart { _ = "STUB: not implemented"; return nil }
 
-func (l *LengthOfPart) SetReplica() *LengthOfPart {
-	l.Replica = true
-	return l
-}
+func (l *LengthOfPart) SetReplica() *LengthOfPart { _ = "STUB: not implemented"; return nil }
 
 func (l *LengthOfPart) Command(ctx context.Context) *redis.IntCmd {
-	var args []interface{}
-	args = append(args, Internal.LengthOfPart)
-	args = append(args, l.PartID)
-	if l.Replica {
-		args = append(args, "RC")
-	}
-	return redis.NewIntCmd(ctx, args...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ParseLengthOfPartCommand(cmd redcon.Command) (*LengthOfPart, error) {
-	if len(cmd.Args) < 2 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-	partID, err := strconv.ParseUint(util.BytesToString(cmd.Args[1]), 10, 64)
-	if err != nil {
-		return nil, err
-	}
-
-	l := NewLengthOfPart(partID)
-	if len(cmd.Args) == 3 {
-		arg := util.BytesToString(cmd.Args[2])
-		if arg == "RC" {
-			l.SetReplica()
-		} else {
-			return nil, fmt.Errorf("%w: %s", ErrInvalidArgument, arg)
-		}
-	}
-
-	return l, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 type Stats struct {
 	CollectRuntime bool
 }
 
-func NewStats() *Stats {
-	return &Stats{}
-}
+func NewStats() *Stats { _ = "STUB: not implemented"; return nil }
 
-func (s *Stats) SetCollectRuntime() *Stats {
-	s.CollectRuntime = true
-	return s
-}
+func (s *Stats) SetCollectRuntime() *Stats { _ = "STUB: not implemented"; return nil }
 
 func (s *Stats) Command(ctx context.Context) *redis.StringCmd {
-	var args []interface{}
-	args = append(args, Generic.Stats)
-	if s.CollectRuntime {
-		args = append(args, "CR")
-	}
-	return redis.NewStringCmd(ctx, args...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ParseStatsCommand(cmd redcon.Command) (*Stats, error) {
-	if len(cmd.Args) < 1 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	s := NewStats()
-	if len(cmd.Args) == 2 {
-		arg := util.BytesToString(cmd.Args[1])
-		if arg == "CR" {
-			s.SetCollectRuntime()
-		} else {
-			return nil, fmt.Errorf("%w: %s", ErrInvalidArgument, arg)
-		}
-	}
-
-	return s, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // Auth represents a structure for authentication containing a password.
@@ -209,29 +115,13 @@ type Auth struct {
 }
 
 // NewAuth creates and returns a new Auth instance initialized with the given password.
-func NewAuth(password string) *Auth {
-	return &Auth{
-		Password: password,
-	}
-}
+func NewAuth(password string) *Auth { _ = "STUB: not implemented"; return nil }
 
 // Command constructs a Redis AUTH command using the provided authentication password from the Auth instance.
-func (a *Auth) Command(ctx context.Context) *redis.StatusCmd {
-	var args []interface{}
-
-	args = append(args, Generic.Auth)
-	args = append(args, a.Password)
-
-	return redis.NewStatusCmd(ctx, args...)
-}
+func (a *Auth) Command(ctx context.Context) *redis.StatusCmd { _ = "STUB: not implemented"; return nil }
 
 // ParseAuthCommand parses a redcon.Command to create an Auth instance and validates command arguments.
 func ParseAuthCommand(cmd redcon.Command) (*Auth, error) {
-	if len(cmd.Args) != 2 {
-		return nil, errWrongNumber(cmd.Args)
-	}
-
-	return NewAuth(
-		util.BytesToString(cmd.Args[1]),
-	), nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }

@@ -16,7 +16,6 @@ package olric
 
 import (
 	"context"
-	"strings"
 
 	"github.com/olric-data/olric/internal/server"
 	"github.com/redis/go-redis/v9"
@@ -29,52 +28,36 @@ type PubSub struct {
 }
 
 func newPubSub(client *server.Client, options ...PubSubOption) (*PubSub, error) {
-	var (
-		err error
-		rc  *redis.Client
-		pc  pubsubConfig
-	)
-	for _, opt := range options {
-		opt(&pc)
-	}
-
-	addr := strings.Trim(pc.Address, " ")
-	if addr != "" {
-		rc = client.Get(addr)
-	} else {
-		rc, err = client.Pick()
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return &PubSub{
-		config: &pc,
-		rc:     rc,
-		client: client,
-	}, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (ps *PubSub) Subscribe(ctx context.Context, channels ...string) *redis.PubSub {
-	return ps.rc.Subscribe(ctx, channels...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (ps *PubSub) PSubscribe(ctx context.Context, channels ...string) *redis.PubSub {
-	return ps.rc.PSubscribe(ctx, channels...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (ps *PubSub) Publish(ctx context.Context, channel string, message interface{}) (int64, error) {
-	return ps.rc.Publish(ctx, channel, message).Result()
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (ps *PubSub) PubSubChannels(ctx context.Context, pattern string) ([]string, error) {
-	return ps.rc.PubSubChannels(ctx, pattern).Result()
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (ps *PubSub) PubSubNumSub(ctx context.Context, channels ...string) (map[string]int64, error) {
-	return ps.rc.PubSubNumSub(ctx, channels...).Result()
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (ps *PubSub) PubSubNumPat(ctx context.Context) (int64, error) {
-	return ps.rc.PubSubNumPat(ctx).Result()
+	_ = "STUB: not implemented"
+	return 0, nil
 }

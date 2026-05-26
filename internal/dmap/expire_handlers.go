@@ -15,66 +15,15 @@
 package dmap
 
 import (
-	"github.com/olric-data/olric/internal/protocol"
 	"github.com/tidwall/redcon"
 )
 
 func (s *Service) expireCommandHandler(conn redcon.Conn, cmd redcon.Command) {
-	expireCmd, err := protocol.ParseExpireCommand(cmd)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	dm, err := s.getOrCreateDMap(expireCmd.DMap)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	pc := &PutConfig{
-		OnlyUpdateTTL: true,
-	}
-
-	e := newEnv(s.ctx)
-	e.putConfig = pc
-	e.dmap = expireCmd.DMap
-	e.key = expireCmd.Key
-	e.timeout = expireCmd.Seconds
-	err = dm.put(e)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-	conn.WriteString(protocol.StatusOK)
+	_ = "STUB: not implemented"
+	return
 }
 
 func (s *Service) pexpireCommandHandler(conn redcon.Conn, cmd redcon.Command) {
-	pexpireCmd, err := protocol.ParsePExpireCommand(cmd)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	dm, err := s.getOrCreateDMap(pexpireCmd.DMap)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	pc := &PutConfig{
-		OnlyUpdateTTL: true,
-	}
-
-	e := newEnv(s.ctx)
-	e.putConfig = pc
-	e.dmap = pexpireCmd.DMap
-	e.key = pexpireCmd.Key
-	e.timeout = pexpireCmd.Milliseconds
-	err = dm.put(e)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-	conn.WriteString(protocol.StatusOK)
+	_ = "STUB: not implemented"
+	return
 }

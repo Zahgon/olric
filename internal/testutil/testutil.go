@@ -15,111 +15,31 @@
 package testutil
 
 import (
-	"fmt"
-	"net"
-	"strconv"
 	"testing"
 	"time"
 
-	"github.com/hashicorp/memberlist"
 	"github.com/olric-data/olric/config"
 	"github.com/olric-data/olric/internal/server"
 	"github.com/olric-data/olric/pkg/flog"
-	"github.com/stretchr/testify/require"
 )
 
-func GetFreePort() (int, error) {
-	addr, err := net.ResolveTCPAddr("tcp", "127.0.0.1:0")
-	if err != nil {
-		return 0, err
-	}
+func GetFreePort() (int, error) { _ = "STUB: not implemented"; return 0, nil }
 
-	l, err := net.ListenTCP("tcp", addr)
-	if err != nil {
-		return 0, err
-	}
-	port := l.Addr().(*net.TCPAddr).Port
-	if err := l.Close(); err != nil {
-		return 0, err
-	}
-	return port, nil
-}
+func NewFlogger(c *config.Config) *flog.Logger { _ = "STUB: not implemented"; return nil }
 
-func NewFlogger(c *config.Config) *flog.Logger {
-	flogger := flog.New(c.Logger)
-	flogger.SetLevel(c.LogVerbosity)
-	if c.LogLevel == "DEBUG" {
-		flogger.ShowLineNumber(1)
-	}
-	return flogger
-}
+func NewEngineConfig(t *testing.T) *config.Engine { _ = "STUB: not implemented"; return nil }
 
-func NewEngineConfig(t *testing.T) *config.Engine {
-	e := config.NewEngine()
-	require.NoError(t, e.Sanitize())
-	require.NoError(t, e.Validate())
-	return e
-}
+func NewConfig() *config.Config { _ = "STUB: not implemented"; return nil }
 
-func NewConfig() *config.Config {
-	c := config.New("local")
-	c.PartitionCount = 7
-	mc := memberlist.DefaultLocalConfig()
-	mc.BindAddr = "127.0.0.1"
-	mc.BindPort = 0
-	c.MemberlistConfig = mc
-
-	port, err := GetFreePort()
-	if err != nil {
-		panic(fmt.Sprintf("GetFreePort returned an error: %v", err))
-	}
-	c.BindAddr = "127.0.0.1"
-	c.BindPort = port
-	c.MemberlistConfig.Name = net.JoinHostPort(c.BindAddr, strconv.Itoa(c.BindPort))
-	c.LeaveTimeout = 500 * time.Millisecond
-	if err := c.Sanitize(); err != nil {
-		panic(fmt.Sprintf("failed to sanitize default config: %v", err))
-	}
-	return c
-}
-
-func NewServer(c *config.Config) *server.Server {
-	sc := &server.Config{
-		BindAddr:        c.BindAddr,
-		BindPort:        c.BindPort,
-		KeepAlivePeriod: time.Second,
-	}
-	l := NewFlogger(c)
-	return server.New(sc, l)
-}
+func NewServer(c *config.Config) *server.Server { _ = "STUB: not implemented"; return nil }
 
 func TryWithInterval(max int, interval time.Duration, f func() error) error {
-	ticker := time.NewTicker(interval)
-	defer ticker.Stop()
-
-	var err error
-	err = f()
-	if err == nil {
-		// Done. No need to try with interval
-		return nil
-	}
-
-	var count = 1
-	for count < max {
-		<-ticker.C
-		count++
-		err = f()
-		if err == nil {
-			break
-		}
-	}
-	return err
+	_ = "STUB: not implemented"
+	return nil
 }
 
-func ToKey(i int) string {
-	return fmt.Sprintf("%09d", i)
-}
+// Done. No need to try with interval
 
-func ToVal(i int) []byte {
-	return []byte(fmt.Sprintf("%010d", i))
-}
+func ToKey(i int) string { _ = "STUB: not implemented"; return "" }
+
+func ToVal(i int) []byte { _ = "STUB: not implemented"; return nil }

@@ -15,7 +15,6 @@
 package routingtable
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/olric-data/olric/internal/discovery"
@@ -26,44 +25,22 @@ type Members struct {
 	m map[uint64]discovery.Member
 }
 
-func newMembers() *Members {
-	return &Members{
-		m: map[uint64]discovery.Member{},
-	}
-}
+func newMembers() *Members { _ = "STUB: not implemented"; return nil }
 
-func (m *Members) Add(member discovery.Member) {
-	m.m[member.ID] = member
-}
+func (m *Members) Add(member discovery.Member) { _ = "STUB: not implemented"; return }
 
 func (m *Members) Get(id uint64) (discovery.Member, error) {
-	member, ok := m.m[id]
-	if !ok {
-		return discovery.Member{}, fmt.Errorf("member not found with id: %d", id)
-	}
-	return member, nil
+	_ = "STUB: not implemented"
+	return *new(discovery.Member), nil
 }
 
-func (m *Members) Delete(id uint64) {
-	delete(m.m, id)
-}
+func (m *Members) Delete(id uint64) { _ = "STUB: not implemented"; return }
 
-func (m *Members) DeleteByName(other discovery.Member) {
-	for id, member := range m.m {
-		if member.CompareByName(other) {
-			delete(m.m, id)
-		}
-	}
-}
+func (m *Members) DeleteByName(other discovery.Member) { _ = "STUB: not implemented"; return }
 
-func (m *Members) Length() int {
-	return len(m.m)
-}
+func (m *Members) Length() int { _ = "STUB: not implemented"; return 0 }
 
 func (m *Members) Range(f func(id uint64, member discovery.Member) bool) {
-	for id, member := range m.m {
-		if !f(id, member) {
-			break
-		}
-	}
+	_ = "STUB: not implemented"
+	return
 }

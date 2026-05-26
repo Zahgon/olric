@@ -15,8 +15,6 @@
 package config
 
 import (
-	"fmt"
-	"runtime"
 	"time"
 )
 
@@ -79,61 +77,8 @@ type DMaps struct {
 }
 
 // Sanitize sets default values to empty configuration variables, if it's possible.
-func (dm *DMaps) Sanitize() error {
-	if dm.Engine == nil {
-		dm.Engine = NewEngine()
-	}
+func (dm *DMaps) Sanitize() error { _ = "STUB: not implemented"; return nil }
 
-	if dm.Custom == nil {
-		dm.Custom = make(map[string]DMap)
-	}
-
-	if dm.EvictionPolicy == "" {
-		dm.EvictionPolicy = "NONE"
-	}
-
-	if dm.LRUSamples <= 0 {
-		dm.LRUSamples = DefaultLRUSamples
-	}
-
-	if dm.MaxInuse < 0 {
-		dm.MaxInuse = 0
-	}
-
-	if dm.MaxKeys < 0 {
-		dm.MaxKeys = 0
-	}
-
-	if dm.NumEvictionWorkers <= 0 {
-		dm.NumEvictionWorkers = int64(runtime.NumCPU())
-	}
-
-	if dm.CheckEmptyFragmentsInterval.Microseconds() == 0 {
-		dm.CheckEmptyFragmentsInterval = DefaultCheckEmptyFragmentsInterval
-	}
-
-	if dm.TriggerCompactionInterval.Microseconds() == 0 {
-		dm.TriggerCompactionInterval = DefaultTriggerCompactionInterval
-	}
-
-	for _, d := range dm.Custom {
-		if err := d.Sanitize(); err != nil {
-			return err
-		}
-	}
-
-	if err := dm.Engine.Sanitize(); err != nil {
-		return fmt.Errorf("failed to sanitize storage engine configuration: %w", err)
-	}
-
-	return nil
-}
-
-func (dm *DMaps) Validate() error {
-	if err := dm.Engine.Validate(); err != nil {
-		return fmt.Errorf("failed to validate storage engine configuration: %w", err)
-	}
-	return nil
-}
+func (dm *DMaps) Validate() error { _ = "STUB: not implemented"; return nil }
 
 var _ IConfig = (*DMaps)(nil)

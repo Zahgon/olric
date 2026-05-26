@@ -100,10 +100,12 @@ type Member struct {
 
 // String returns the member name.
 func (m Member) String() string {
-	return m.Name
+	_ = "STUB: not implemented"
+
+	// Network holds network statistics.
+	return ""
 }
 
-// Network holds network statistics.
 type Network struct {
 	// ConnectionsTotal is total number of connections opened since the server started running.
 	ConnectionsTotal int64 `json:"connections_total"`

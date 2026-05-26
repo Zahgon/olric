@@ -15,67 +15,17 @@
 package dmap
 
 import (
-	"github.com/olric-data/olric/internal/cluster/partitions"
-	"github.com/olric-data/olric/internal/protocol"
 	"github.com/tidwall/redcon"
 )
 
 func (s *Service) getCommandHandler(conn redcon.Conn, cmd redcon.Command) {
-	getCmd, err := protocol.ParseGetCommand(cmd)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-	dm, err := s.getOrCreateDMap(getCmd.DMap)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	raw, err := dm.Get(s.ctx, getCmd.Key)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	if getCmd.Raw {
-		conn.WriteBulk(raw.Encode())
-		return
-	}
-	conn.WriteBulk(raw.Value())
+	_ = "STUB: not implemented"
+	return
 }
 
 func (s *Service) getEntryCommandHandler(conn redcon.Conn, cmd redcon.Command) {
-	getEntryCmd, err := protocol.ParseGetEntryCommand(cmd)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-	dm, err := s.getOrCreateDMap(getEntryCmd.DMap)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	var kind = partitions.PRIMARY
-	if getEntryCmd.Replica {
-		kind = partitions.BACKUP
-	}
-
-	e := newEnv(s.ctx)
-	e.dmap = getEntryCmd.DMap
-	e.key = getEntryCmd.Key
-	e.hkey = partitions.HKey(getEntryCmd.DMap, getEntryCmd.Key)
-	e.kind = kind
-	nt, err := dm.getOnFragment(e)
-	if err == errFragmentNotFound {
-		err = ErrKeyNotFound
-	}
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	// We found it.
-	conn.WriteBulk(nt.Encode())
+	_ = "STUB: not implemented"
+	return
 }
+
+// We found it.

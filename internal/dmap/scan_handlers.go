@@ -15,57 +15,17 @@
 package dmap
 
 import (
-	"strconv"
-
-	"github.com/olric-data/olric/internal/cluster/partitions"
-	"github.com/olric-data/olric/internal/protocol"
-	"github.com/olric-data/olric/pkg/storage"
 	"github.com/tidwall/redcon"
 )
 
 func (dm *DMap) scanOnFragment(f *fragment, cursor uint64, sc *ScanConfig) ([]string, uint64, error) {
-	f.Lock()
-	defer f.Unlock()
-
-	var items []string
-	var err error
-
-	if sc.HasMatch {
-		cursor, err = f.storage.ScanRegexMatch(cursor, sc.Match, sc.Count, func(e storage.Entry) bool {
-			items = append(items, e.Key())
-			return true
-		})
-		if err != nil {
-			return nil, 0, err
-		}
-		return items, cursor, nil
-	}
-
-	cursor, err = f.storage.Scan(cursor, sc.Count, func(e storage.Entry) bool {
-		items = append(items, e.Key())
-		return true
-	})
-	if err != nil {
-		return nil, 0, err
-	}
-	return items, cursor, nil
+	_ = "STUB: not implemented"
+	return nil, 0, nil
 }
 
 func (dm *DMap) Scan(partID, cursor uint64, sc *ScanConfig) ([]string, uint64, error) {
-	var part *partitions.Partition
-	if sc.Replica {
-		part = dm.s.backup.PartitionByID(partID)
-	} else {
-		part = dm.s.primary.PartitionByID(partID)
-	}
-	f, err := dm.loadFragment(part)
-	if err == errFragmentNotFound {
-		return nil, 0, nil
-	}
-	if err != nil {
-		return nil, 0, err
-	}
-	return dm.scanOnFragment(f, cursor, sc)
+	_ = "STUB: not implemented"
+	return nil, 0, nil
 }
 
 type ScanConfig struct {
@@ -78,57 +38,11 @@ type ScanConfig struct {
 
 type ScanOption func(*ScanConfig)
 
-func Count(c int) ScanOption {
-	return func(cfg *ScanConfig) {
-		cfg.HasCount = true
-		cfg.Count = c
-	}
-}
+func Count(c int) ScanOption { _ = "STUB: not implemented"; return *new(ScanOption) }
 
-func Match(s string) ScanOption {
-	return func(cfg *ScanConfig) {
-		cfg.HasMatch = true
-		cfg.Match = s
-	}
-}
+func Match(s string) ScanOption { _ = "STUB: not implemented"; return *new(ScanOption) }
 
 func (s *Service) scanCommandHandler(conn redcon.Conn, cmd redcon.Command) {
-	scanCmd, err := protocol.ParseScanCommand(cmd)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	dm, err := s.getOrCreateDMap(scanCmd.DMap)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-
-	var sc ScanConfig
-	var options []ScanOption
-	options = append(options, Count(scanCmd.Count))
-
-	if scanCmd.Match != "" {
-		options = append(options, Match(scanCmd.Match))
-	}
-
-	for _, opt := range options {
-		opt(&sc)
-	}
-	sc.Replica = scanCmd.Replica
-
-	var result []string
-	var cursor uint64
-	result, cursor, err = dm.Scan(scanCmd.PartID, scanCmd.Cursor, &sc)
-	if err != nil {
-		protocol.WriteError(conn, err)
-		return
-	}
-	conn.WriteArray(2)
-	conn.WriteBulkString(strconv.FormatUint(cursor, 10))
-	conn.WriteArray(len(result))
-	for _, i := range result {
-		conn.WriteBulkString(i)
-	}
+	_ = "STUB: not implemented"
+	return
 }

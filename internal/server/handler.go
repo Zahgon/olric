@@ -15,10 +15,6 @@
 package server
 
 import (
-	"fmt"
-
-	"github.com/olric-data/olric/internal/protocol"
-	"github.com/olric-data/olric/internal/util"
 	"github.com/tidwall/redcon"
 )
 
@@ -39,45 +35,18 @@ type Handler struct {
 }
 
 // ServeRESP calls f(w, r)
-func (h Handler) ServeRESP(conn redcon.Conn, cmd redcon.Command) {
-	CommandsTotal.Increase(1)
+func (h Handler) ServeRESP(conn redcon.Conn, cmd redcon.Command) { _ = "STUB: not implemented"; return }
 
-	if len(cmd.Args) == 0 {
-		// A client may form a bad message, prevent panicking.
-		h.handler(conn, cmd)
-		return
-	}
-	command := util.BytesToString(cmd.Args[0])
-	if command == "pubsub" || command == "PUBSUB" {
-		command = fmt.Sprintf("%s %s", command, util.BytesToString(cmd.Args[1]))
-	}
+// A client may form a bad message, prevent panicking.
 
-	// Do not call precondition function for the following commands:
-	// * Internal.UpdateRouting
-	// * Generic.Auth
-	if command == protocol.Internal.UpdateRouting || command == protocol.Generic.Auth {
-		h.handler(conn, cmd)
-		return
-	}
+// Do not call precondition function for the following commands:
+// * Internal.UpdateRouting
+// * Generic.Auth
 
-	if h.precondition == nil {
-		// No precondition
-		h.handler(conn, cmd)
-		return
-	}
-
-	if h.precondition(conn, cmd) {
-		h.handler(conn, cmd)
-	}
-}
+// No precondition
 
 // HandleFunc registers the handler function for the given command.
 func (m *ServeMuxWrapper) HandleFunc(command string, handler func(conn redcon.Conn, cmd redcon.Command)) {
-	if handler == nil {
-		panic("server: nil handler")
-	}
-	m.mux.Handle(command, Handler{
-		handler:      handler,
-		precondition: m.precond,
-	})
+	_ = "STUB: not implemented"
+	return
 }

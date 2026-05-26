@@ -30,25 +30,7 @@ import (
 	"github.com/sean-/seed"
 )
 
-func usage() {
-	var msg = `Usage: olric-server [options] ...
-
-Distributed key-value store and cache
-
-Options:
-  -h, --help    Print this message and exit.
-  -v, --version Print the version number and exit.
-  -c, --config  Sets configuration file path. Default is olric-server-local.yaml in the
-                current folder. Set OLRIC_SERVER_CONFIG to overwrite it.
-
-The Go runtime version %s
-Report bugs to https://github.com/olric-data/olric/issues
-`
-	_, err := fmt.Fprintf(os.Stdout, msg, runtime.Version())
-	if err != nil {
-		panic(err)
-	}
-}
+func usage() { _ = "STUB: not implemented"; return }
 
 type arguments struct {
 	config  string

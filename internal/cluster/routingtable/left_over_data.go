@@ -15,46 +15,18 @@
 package routingtable
 
 import (
-	"github.com/olric-data/olric/internal/cluster/partitions"
 	"github.com/olric-data/olric/internal/discovery"
 )
 
 func (r *RoutingTable) processLeftOverDataReports(reports map[discovery.Member]*leftOverDataReport) {
-	check := func(member discovery.Member, owners []discovery.Member) bool {
-		for _, owner := range owners {
-			if member.CompareByID(owner) {
-				return true
-			}
-		}
-		return false
-	}
-
-	ensureOwnership := func(member discovery.Member, partID uint64, part *partitions.Partition) {
-		owners := part.Owners()
-		if check(member, owners) {
-			return
-		}
-		// This section is protected by routingMtx against parallel writers.
-		//
-		// Copy owners and append the member to head
-		newOwners := make([]discovery.Member, len(owners))
-		copy(newOwners, owners)
-		// Prepend
-		newOwners = append([]discovery.Member{member}, newOwners...)
-		part.SetOwners(newOwners)
-		r.log.V(2).Printf("[INFO] %s still have some data for PartID (kind: %s): %d", member, part.Kind(), partID)
-	}
-
-	// data structures in this function is guarded by routingMtx
-	for member, report := range reports {
-		for _, partID := range report.Partitions {
-			part := r.primary.PartitionByID(partID)
-			ensureOwnership(member, partID, part)
-		}
-
-		for _, partID := range report.Backups {
-			part := r.backup.PartitionByID(partID)
-			ensureOwnership(member, partID, part)
-		}
-	}
+	_ = "STUB: not implemented"
+	return
 }
+
+// This section is protected by routingMtx against parallel writers.
+//
+// Copy owners and append the member to head
+
+// Prepend
+
+// data structures in this function is guarded by routingMtx

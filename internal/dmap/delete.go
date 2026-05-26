@@ -16,13 +16,10 @@ package dmap
 
 import (
 	"context"
-	"errors"
 
 	"github.com/olric-data/olric/internal/cluster/partitions"
 	"github.com/olric-data/olric/internal/discovery"
-	"github.com/olric-data/olric/internal/protocol"
 	"github.com/olric-data/olric/internal/stats"
-	"golang.org/x/sync/errgroup"
 )
 
 var (
@@ -34,143 +31,45 @@ var (
 )
 
 func (dm *DMap) deleteFromFragment(key string, kind partitions.Kind) error {
-	hkey := partitions.HKey(dm.name, key)
-	part := dm.getPartitionByHKey(hkey, kind)
-	f, err := dm.loadFragment(part)
-	if errors.Is(err, errFragmentNotFound) {
-		// key doesn't exist
-		return nil
-	}
-	if err != nil {
-		return err
-	}
-
-	f.Lock()
-	defer f.Unlock()
-
-	return f.storage.Delete(hkey)
+	_ = "STUB: not implemented"
+	return nil
 }
 
+// key doesn't exist
+
 func (dm *DMap) deleteFromPreviousOwners(key string, owners []discovery.Member) error {
+	_ = "STUB: not implemented"
 	// Traverse in reverse order. Except from the latest host, this one.
-	for i := len(owners) - 2; i >= 0; i-- {
-		owner := owners[i]
-		cmd := protocol.NewDelEntry(dm.name, key).Command(dm.s.ctx)
-		rc := dm.s.client.Get(owner.String())
-		err := rc.Process(dm.s.ctx, cmd)
-		if err != nil {
-			return protocol.ConvertError(err)
-		}
-		err = cmd.Err()
-		if err != nil {
-			return protocol.ConvertError(err)
-		}
-	}
 	return nil
 }
 
 func (dm *DMap) deleteBackupOnCluster(hkey uint64, key string) error {
-	owners := dm.s.backup.PartitionOwnersByHKey(hkey)
-	var g errgroup.Group
-	for _, owner := range owners {
-		mem := owner
-		g.Go(func() error {
-			cmd := protocol.NewDelEntry(dm.name, key).SetReplica().Command(dm.s.ctx)
-			rc := dm.s.client.Get(mem.String())
-			err := rc.Process(dm.s.ctx, cmd)
-			if err != nil {
-				dm.s.log.V(3).Printf("[ERROR] Failed to delete replica key/value on %s: %s", dm.name, err)
-				return protocol.ConvertError(err)
-			}
-			return protocol.ConvertError(cmd.Err())
-		})
-	}
-	return g.Wait()
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // deleteOnCluster is not a thread-safe function
 func (dm *DMap) deleteOnCluster(hkey uint64, key string, f *fragment) error {
-	owners := dm.s.primary.PartitionOwnersByHKey(hkey)
-	if len(owners) == 0 {
-		panic("partition owners list cannot be empty")
-	}
-
-	err := dm.deleteFromPreviousOwners(key, owners)
-	if err != nil {
-		return err
-	}
-
-	if dm.s.config.ReplicaCount != 0 {
-		err := dm.deleteBackupOnCluster(hkey, key)
-		if err != nil {
-			return err
-		}
-	}
-
-	err = f.storage.Delete(hkey)
-	if err != nil {
-		return err
-	}
-
-	// DeleteHits is the number of deletion reqs resulting in an item being removed.
-	DeleteHits.Increase(1)
-
+	_ = "STUB: not implemented"
 	return nil
 }
 
-func (dm *DMap) deleteKey(key string) error {
-	hkey := partitions.HKey(dm.name, key)
-	part := dm.getPartitionByHKey(hkey, partitions.PRIMARY)
-	f, err := dm.loadOrCreateFragment(part)
-	if err != nil {
-		return err
-	}
+// DeleteHits is the number of deletion reqs resulting in an item being removed.
 
-	f.Lock()
-	defer f.Unlock()
+func (dm *DMap) deleteKey(key string) error { _ = "STUB: not implemented"; return nil }
 
-	// Check the HKey before trying to delete it.
-	if !f.storage.Check(hkey) {
-		// DeleteMisses is the number of deletions reqs for missing keys
-		DeleteMisses.Increase(1)
-		return nil
-	}
+// Check the HKey before trying to delete it.
 
-	return dm.deleteOnCluster(hkey, key, f)
-}
+// DeleteMisses is the number of deletions reqs for missing keys
 
 func (dm *DMap) deleteKeys(ctx context.Context, keys ...string) (int, error) {
-	members := make(map[discovery.Member][]string)
-	for _, key := range keys {
-		hkey := partitions.HKey(dm.name, key)
-		member := dm.s.primary.PartitionByHKey(hkey).Owner()
-		members[member] = append(members[member], key)
-	}
-
-	for member, distributedKeys := range members {
-		if member.CompareByName(dm.s.rt.This()) {
-			for _, key := range distributedKeys {
-				if err := dm.deleteKey(key); err != nil {
-					return 0, err
-				}
-			}
-		} else {
-			cmd := protocol.NewDel(dm.name, distributedKeys...).Command(dm.s.ctx)
-			rc := dm.s.client.Get(member.String())
-			err := rc.Process(ctx, cmd)
-			if err != nil {
-				return 0, protocol.ConvertError(err)
-			}
-
-			return 0, protocol.ConvertError(cmd.Err())
-		}
-	}
-
-	return len(keys), nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 // Delete deletes the value for the given key. Delete will not return error if key doesn't exist. It's thread-safe.
 // It is safe to modify the contents of the argument after Delete returns.
 func (dm *DMap) Delete(ctx context.Context, keys ...string) (int, error) {
-	return dm.deleteKeys(ctx, keys...)
+	_ = "STUB: not implemented"
+	return 0, nil
 }

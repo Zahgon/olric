@@ -15,7 +15,6 @@
 package storage
 
 import (
-	"fmt"
 	"sync"
 )
 
@@ -26,54 +25,19 @@ type Config struct {
 }
 
 // NewConfig returns a new Config
-func NewConfig(cfg map[string]interface{}) *Config {
-	if cfg == nil {
-		cfg = make(map[string]interface{})
-	}
-	return &Config{
-		m: cfg,
-	}
-}
+func NewConfig(cfg map[string]interface{}) *Config { _ = "STUB: not implemented"; return nil }
 
 // Add adds a new key/value pair to Config
-func (c *Config) Add(key string, value interface{}) {
-	c.Lock()
-	defer c.Unlock()
-	c.m[key] = value
-}
+func (c *Config) Add(key string, value interface{}) { _ = "STUB: not implemented"; return }
 
 // Get loads a configuration variable with its key, otherwise it returns an error.
-func (c *Config) Get(key string) (interface{}, error) {
-	c.Lock()
-	defer c.Unlock()
-	value, ok := c.m[key]
-	if !ok {
-		return nil, fmt.Errorf("not found: %s", key)
-	}
-	return value, nil
-}
+func (c *Config) Get(key string) (interface{}, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // Delete deletes a configuration variable with its key.
-func (c *Config) Delete(key string) {
-	c.Lock()
-	defer c.Unlock()
-	delete(c.m, key)
-}
+func (c *Config) Delete(key string) { _ = "STUB: not implemented"; return }
 
 // Copy creates a thread-safe copy of the existing Config struct.
-func (c *Config) Copy() *Config {
-	c.Lock()
-	defer c.Unlock()
-	n := &Config{
-		m: make(map[string]interface{}),
-	}
-	for key, value := range c.m {
-		n.m[key] = value
-	}
-	return n
-}
+func (c *Config) Copy() *Config { _ = "STUB: not implemented"; return nil }
 
 // ToMap casts Config to map[string]interface{} type.
-func (c *Config) ToMap() map[string]interface{} {
-	return c.Copy().m
-}
+func (c *Config) ToMap() map[string]interface{} { _ = "STUB: not implemented"; return nil }

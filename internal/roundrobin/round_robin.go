@@ -16,7 +16,6 @@ package roundrobin
 
 import (
 	"errors"
-	"fmt"
 	"sync"
 )
 
@@ -34,61 +33,20 @@ type RoundRobin struct {
 }
 
 // New returns a new RoundRobin instance.
-func New(items []string) *RoundRobin {
-	return &RoundRobin{
-		current: 0,
-		items:   items,
-	}
-}
+func New(items []string) *RoundRobin { _ = "STUB: not implemented"; return nil }
 
 // Get returns an item.
 func (r *RoundRobin) Get() (string, error) {
+	_ = "STUB: not implemented"
 	// Acquire the lock here. This function modifies the internal state.
-	r.mtx.Lock()
-	defer r.mtx.Unlock()
-
-	if len(r.items) == 0 {
-		return "", ErrEmptyInstance
-	}
-
-	if r.current >= len(r.items) {
-		r.current %= len(r.items)
-	}
-
-	if r.current >= len(r.items) {
-		return "", fmt.Errorf("round-robin: corrupted internal state")
-	}
-
-	item := r.items[r.current]
-	r.current++
-	return item, nil
+	return "", nil
 }
 
 // Add adds a new item to the Round-Robin scheduler.
-func (r *RoundRobin) Add(item string) {
-	r.mtx.Lock()
-	defer r.mtx.Unlock()
-
-	r.items = append(r.items, item)
-}
+func (r *RoundRobin) Add(item string) { _ = "STUB: not implemented"; return }
 
 // Delete deletes an item from the Round-Robin scheduler.
-func (r *RoundRobin) Delete(item string) {
-	r.mtx.Lock()
-	defer r.mtx.Unlock()
-
-	for i := 0; i < len(r.items); i++ {
-		if r.items[i] == item {
-			r.items = append(r.items[:i], r.items[i+1:]...)
-			i--
-		}
-	}
-}
+func (r *RoundRobin) Delete(item string) { _ = "STUB: not implemented"; return }
 
 // Length returns the count of items
-func (r *RoundRobin) Length() int {
-	r.mtx.RLock()
-	defer r.mtx.RUnlock()
-
-	return len(r.items)
-}
+func (r *RoundRobin) Length() int { _ = "STUB: not implemented"; return 0 }

@@ -18,10 +18,8 @@ import (
 	"context"
 	"log"
 	"sync"
-	"time"
 
 	"github.com/olric-data/olric/internal/dmap"
-	"github.com/olric-data/olric/internal/protocol"
 )
 
 type currentCursor struct {
@@ -52,258 +50,58 @@ type ClusterIterator struct {
 	cancel         context.CancelFunc
 }
 
-func (i *ClusterIterator) loadRoute() {
-	i.routingTableMtx.Lock()
-	defer i.routingTableMtx.Unlock()
-
-	route, ok := i.routingTable[i.partID]
-	if !ok {
-		panic("partID: could not be found in the routing table")
-	}
-	i.route = &route
-}
+func (i *ClusterIterator) loadRoute() { _ = "STUB: not implemented"; return }
 
 func (i *ClusterIterator) updateCursor(owner string, cursor uint64) {
-	if _, ok := i.cursors[i.partID]; !ok {
-		i.cursors[i.partID] = make(map[string]*currentCursor)
-	}
-	cc, ok := i.cursors[i.partID][owner]
-	if !ok {
-		cc = &currentCursor{}
-		if i.config.Replica {
-			cc.replica = cursor
-		} else {
-			cc.primary = cursor
-		}
-		i.cursors[i.partID][owner] = cc
-		return
-	}
-
-	if i.config.Replica {
-		cc.replica = cursor
-	} else {
-		cc.primary = cursor
-	}
-	i.cursors[i.partID][owner] = cc
+	_ = "STUB: not implemented"
+	return
 }
 
-func (i *ClusterIterator) loadCursor(owner string) uint64 {
-	if _, ok := i.cursors[i.partID]; !ok {
-		return 0
-	}
-	cc, ok := i.cursors[i.partID][owner]
-	if !ok {
-		return 0
-	}
-	if i.config.Replica {
-		return cc.replica
-	}
-	return cc.primary
-}
+func (i *ClusterIterator) loadCursor(owner string) uint64 { _ = "STUB: not implemented"; return 0 }
 
 func (i *ClusterIterator) updateIterator(keys []string, cursor uint64, owner string) {
-	for _, key := range keys {
-		if _, ok := i.partitionKeys[key]; !ok {
-			i.page = append(i.page, key)
-			i.partitionKeys[key] = struct{}{}
-		}
-	}
-	i.updateCursor(owner, cursor)
+	_ = "STUB: not implemented"
+	return
 }
 
-func (i *ClusterIterator) getOwners() []string {
-	var raw []string
-	if i.config.Replica {
-		raw = i.routingTable[i.partID].ReplicaOwners
-	} else {
-		raw = i.routingTable[i.partID].PrimaryOwners
-	}
-	var owners []string
-	// Make a safe copy of the raw.
-	for _, owner := range raw {
-		owners = append(owners, owner)
-	}
-	return owners
-}
+func (i *ClusterIterator) getOwners() []string { _ = "STUB: not implemented"; return nil }
 
-func (i *ClusterIterator) removeScannedOwner(idx int) {
-	if i.config.Replica {
-		if len(i.route.ReplicaOwners) > 0 && len(i.route.ReplicaOwners) > idx {
-			i.route.ReplicaOwners = append(i.route.ReplicaOwners[:idx], i.route.ReplicaOwners[idx+1:]...)
-		}
-	} else {
-		if len(i.route.PrimaryOwners) > 0 && len(i.route.PrimaryOwners) > idx {
-			i.route.PrimaryOwners = append(i.route.PrimaryOwners[:idx], i.route.PrimaryOwners[idx+1:]...)
-		}
-	}
-}
+// Make a safe copy of the raw.
 
-func (i *ClusterIterator) scanOnOwners() error {
-	owners := i.getOwners()
+func (i *ClusterIterator) removeScannedOwner(idx int) { _ = "STUB: not implemented"; return }
 
-	for idx, owner := range owners {
-		cursor := i.loadCursor(owner)
+func (i *ClusterIterator) scanOnOwners() error { _ = "STUB: not implemented"; return nil }
 
-		// Build a scan command here
-		s := protocol.NewScan(i.partID, i.dm.Name(), cursor)
-		if i.config.HasCount {
-			s.SetCount(i.config.Count)
-		}
-		if i.config.HasMatch {
-			s.SetMatch(i.config.Match)
-		}
-		if i.config.Replica {
-			s.SetReplica()
-		}
+// Build a scan command here
 
-		scanCmd := s.Command(i.ctx)
-		// Fetch a Redis client for the given owner.
-		rc := i.clusterClient.client.Get(owner)
-		err := rc.Process(i.ctx, scanCmd)
-		if err != nil {
-			return err
-		}
+// Fetch a Redis client for the given owner.
 
-		keys, newCursor, err := scanCmd.Result()
-		if err != nil {
-			return err
-		}
-		i.updateIterator(keys, newCursor, owner)
-		if newCursor == 0 {
-			i.removeScannedOwner(idx)
-		}
-	}
-	return nil
-}
+func (i *ClusterIterator) resetPage() { _ = "STUB: not implemented"; return }
 
-func (i *ClusterIterator) resetPage() {
-	if len(i.page) != 0 {
-		i.page = []string{}
-	}
-	i.pos = 0
-}
+func (i *ClusterIterator) fetchData() error { _ = "STUB: not implemented"; return nil }
 
-func (i *ClusterIterator) fetchData() error {
-	i.config.Replica = false
-	if err := i.scanner(); err != nil {
-		return err
-	}
+func (i *ClusterIterator) reset() { _ = "STUB: not implemented"; return }
 
-	i.config.Replica = true
-	return i.scanner()
-}
+func (i *ClusterIterator) next() bool { _ = "STUB: not implemented"; return false }
 
-func (i *ClusterIterator) reset() {
-	i.partitionKeys = make(map[string]struct{})
-	i.resetPage()
-	i.loadRoute()
-}
+// We have data on the page to read. Stop the iteration.
 
-func (i *ClusterIterator) next() bool {
-	if len(i.page) != 0 {
-		i.pos++
-		if i.pos <= len(i.page) {
-			return true
-		}
-	}
-
-	i.resetPage()
-
-	for {
-		if err := i.fetchData(); err != nil {
-			i.logger.Printf("[ERROR] Failed to fetch data: %s", err)
-			return false
-		}
-		if len(i.page) != 0 {
-			// We have data on the page to read. Stop the iteration.
-			break
-		}
-
-		if len(i.route.PrimaryOwners) == 0 && len(i.route.ReplicaOwners) == 0 {
-			// We completed scanning all the owners. Stop the iteration.
-			break
-		}
-	}
-
-	if len(i.page) == 0 && len(i.route.PrimaryOwners) == 0 && len(i.route.ReplicaOwners) == 0 {
-		i.partID++
-		if i.partID >= i.partitionCount {
-			return false
-		}
-		i.reset()
-		return i.next()
-	}
-	i.pos = 1
-	return true
-}
+// We completed scanning all the owners. Stop the iteration.
 
 // Next returns true if there is more key in the iterator implementation.
 // Otherwise, it returns false
-func (i *ClusterIterator) Next() bool {
-	i.mtx.Lock()
-	defer i.mtx.Unlock()
-
-	select {
-	case <-i.ctx.Done():
-		return false
-	default:
-	}
-
-	return i.next()
-}
+func (i *ClusterIterator) Next() bool { _ = "STUB: not implemented"; return false }
 
 // Key returns a key name from the distributed map.
-func (i *ClusterIterator) Key() string {
-	i.mtx.Lock()
-	defer i.mtx.Unlock()
+func (i *ClusterIterator) Key() string { _ = "STUB: not implemented"; return "" }
 
-	var key string
-	if i.pos > 0 && i.pos <= len(i.page) {
-		key = i.page[i.pos-1]
-	}
-	return key
-}
+func (i *ClusterIterator) fetchRoutingTablePeriodically() { _ = "STUB: not implemented"; return }
 
-func (i *ClusterIterator) fetchRoutingTablePeriodically() {
-	defer i.wg.Done()
+func (i *ClusterIterator) fetchRoutingTable() error { _ = "STUB: not implemented"; return nil }
 
-	for {
-		select {
-		case <-i.ctx.Done():
-			return
-		case <-time.After(time.Second):
-			if err := i.fetchRoutingTable(); err != nil {
-				i.logger.Printf("[ERROR] Failed to fetch the latest version of the routing table: %s", err)
-			}
-		}
-	}
-}
-
-func (i *ClusterIterator) fetchRoutingTable() error {
-	routingTable, err := i.clusterClient.RoutingTable(i.ctx)
-	if err != nil {
-		return err
-	}
-
-	i.routingTableMtx.Lock()
-	defer i.routingTableMtx.Unlock()
-
-	// Partition count is a constant, actually. It has to be greater than zero.
-	i.partitionCount = uint64(len(routingTable))
-	i.routingTable = routingTable
-	return nil
-}
+// Partition count is a constant, actually. It has to be greater than zero.
 
 // Close stops the iteration and releases allocated resources.
-func (i *ClusterIterator) Close() {
-	select {
-	case <-i.ctx.Done():
-		return
-	default:
-	}
+func (i *ClusterIterator) Close() { _ = "STUB: not implemented"; return }
 
-	i.cancel()
-
-	// await for routing table updater
-	i.wg.Wait()
-}
+// await for routing table updater

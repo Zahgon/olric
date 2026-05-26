@@ -18,7 +18,6 @@ import (
 	"errors"
 	"time"
 
-	"github.com/olric-data/olric/internal/resp"
 	"github.com/olric-data/olric/pkg/storage"
 )
 
@@ -28,170 +27,48 @@ type GetResponse struct {
 	entry storage.Entry
 }
 
-func (g *GetResponse) Scan(v interface{}) error {
-	if g.entry == nil {
-		return ErrNilResponse
-	}
-	return resp.Scan(g.entry.Value(), v)
-}
+func (g *GetResponse) Scan(v interface{}) error { _ = "STUB: not implemented"; return nil }
 
-func (g *GetResponse) Int() (int, error) {
-	v := new(int)
-	err := g.Scan(v)
-	if err != nil {
-		return 0, err
-	}
-	return *v, nil
-}
+func (g *GetResponse) Int() (int, error) { _ = "STUB: not implemented"; return 0, nil }
 
-func (g *GetResponse) String() (string, error) {
-	v := new(string)
-	err := g.Scan(v)
-	if err != nil {
-		return "", err
-	}
-	return *v, nil
-}
+func (g *GetResponse) String() (string, error) { _ = "STUB: not implemented"; return "", nil }
 
-func (g *GetResponse) Int8() (int8, error) {
-	v := new(int8)
-	err := g.Scan(v)
-	if err != nil {
-		return 0, err
-	}
-	return *v, nil
-}
+func (g *GetResponse) Int8() (int8, error) { _ = "STUB: not implemented"; return 0, nil }
 
-func (g *GetResponse) Int16() (int16, error) {
-	v := new(int16)
-	err := g.Scan(v)
-	if err != nil {
-		return 0, err
-	}
-	return *v, nil
-}
+func (g *GetResponse) Int16() (int16, error) { _ = "STUB: not implemented"; return 0, nil }
 
-func (g *GetResponse) Int32() (int32, error) {
-	v := new(int32)
-	err := g.Scan(v)
-	if err != nil {
-		return 0, err
-	}
-	return *v, nil
-}
+func (g *GetResponse) Int32() (int32, error) { _ = "STUB: not implemented"; return 0, nil }
 
-func (g *GetResponse) Int64() (int64, error) {
-	v := new(int64)
-	err := g.Scan(v)
-	if err != nil {
-		return 0, err
-	}
-	return *v, nil
-}
+func (g *GetResponse) Int64() (int64, error) { _ = "STUB: not implemented"; return 0, nil }
 
-func (g *GetResponse) Uint() (uint, error) {
-	v := new(uint)
-	err := g.Scan(v)
-	if err != nil {
-		return 0, err
-	}
-	return *v, nil
-}
+func (g *GetResponse) Uint() (uint, error) { _ = "STUB: not implemented"; return 0, nil }
 
-func (g *GetResponse) Uint8() (uint8, error) {
-	v := new(uint8)
-	err := g.Scan(v)
-	if err != nil {
-		return 0, err
-	}
-	return *v, nil
-}
+func (g *GetResponse) Uint8() (uint8, error) { _ = "STUB: not implemented"; return 0, nil }
 
-func (g *GetResponse) Uint16() (uint16, error) {
-	v := new(uint16)
-	err := g.Scan(v)
-	if err != nil {
-		return 0, err
-	}
-	return *v, nil
-}
+func (g *GetResponse) Uint16() (uint16, error) { _ = "STUB: not implemented"; return 0, nil }
 
-func (g *GetResponse) Uint32() (uint32, error) {
-	v := new(uint32)
-	err := g.Scan(v)
-	if err != nil {
-		return 0, err
-	}
-	return *v, nil
-}
+func (g *GetResponse) Uint32() (uint32, error) { _ = "STUB: not implemented"; return 0, nil }
 
-func (g *GetResponse) Uint64() (uint64, error) {
-	v := new(uint64)
-	err := g.Scan(v)
-	if err != nil {
-		return 0, err
-	}
-	return *v, nil
-}
+func (g *GetResponse) Uint64() (uint64, error) { _ = "STUB: not implemented"; return 0, nil }
 
-func (g *GetResponse) Float32() (float32, error) {
-	v := new(float32)
-	err := g.Scan(v)
-	if err != nil {
-		return 0, err
-	}
-	return *v, nil
-}
+func (g *GetResponse) Float32() (float32, error) { _ = "STUB: not implemented"; return 0, nil }
 
-func (g *GetResponse) Float64() (float64, error) {
-	v := new(float64)
-	err := g.Scan(v)
-	if err != nil {
-		return 0, err
-	}
-	return *v, nil
-}
+func (g *GetResponse) Float64() (float64, error) { _ = "STUB: not implemented"; return 0, nil }
 
-func (g *GetResponse) Bool() (bool, error) {
-	v := new(bool)
-	err := g.Scan(v)
-	if err != nil {
-		return false, err
-	}
-	return *v, nil
-}
+func (g *GetResponse) Bool() (bool, error) { _ = "STUB: not implemented"; return false, nil }
 
 func (g *GetResponse) Time() (time.Time, error) {
-	v := new(time.Time)
-	err := g.Scan(v)
-	if err != nil {
-		return time.Time{}, err
-	}
-	return *v, nil
+	_ = "STUB: not implemented"
+	return *new(time.Time), nil
 }
 
 func (g *GetResponse) Duration() (time.Duration, error) {
-	v := new(time.Duration)
-	err := g.Scan(v)
-	if err != nil {
-		return 0, err
-	}
-	return *v, nil
+	_ = "STUB: not implemented"
+	return *new(time.Duration), nil
 }
 
-func (g *GetResponse) Byte() ([]byte, error) {
-	v := new([]byte)
-	err := g.Scan(v)
-	if err != nil {
-		return nil, err
-	}
-	return *v, nil
-}
+func (g *GetResponse) Byte() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
-func (g *GetResponse) TTL() int64 {
-	return g.entry.TTL()
-}
+func (g *GetResponse) TTL() int64 { _ = "STUB: not implemented"; return 0 }
 
-func (g *GetResponse) Timestamp() int64 {
-	return g.entry.Timestamp()
-}
+func (g *GetResponse) Timestamp() int64 { _ = "STUB: not implemented"; return 0 }

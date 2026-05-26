@@ -18,9 +18,6 @@ package server
 import (
 	"context"
 	"log"
-	"os"
-	"os/signal"
-	"syscall"
 
 	"github.com/olric-data/olric"
 	"github.com/olric-data/olric/config"
@@ -38,67 +35,19 @@ type OlricServer struct {
 }
 
 // New initializes a new OlricServer instance using the provided configuration and returns it or an error.
-func New(c *config.Config) (*OlricServer, error) {
-	db, err := olric.New(c)
-	if err != nil {
-		return nil, err
-	}
-	return &OlricServer{
-		config: c,
-		log:    c.Logger,
-		db:     db,
-	}, nil
-}
+func New(c *config.Config) (*OlricServer, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // waitForInterrupt waits for termination signals (SIGTERM, SIGINT) to gracefully shut down the Olric server instance.
-func (s *OlricServer) waitForInterrupt() {
-	shutDownChan := make(chan os.Signal, 1)
-	signal.Notify(shutDownChan, syscall.SIGTERM, syscall.SIGINT)
-	ch := <-shutDownChan
-	s.log.Printf("[INFO] Signal catched: %s", ch.String())
+func (s *OlricServer) waitForInterrupt() { _ = "STUB: not implemented"; return }
 
-	// Awaits for shutdown
-	s.errGr.Go(func() error {
-		ctx, cancel := context.WithCancel(context.Background())
-		defer cancel()
+// Awaits for shutdown
 
-		if err := s.db.Shutdown(ctx); err != nil {
-			s.log.Printf("[ERROR] Failed to shutdown Olric: %v", err)
-			return err
-		}
-
-		return nil
-	})
-
-	// This is not a goroutine leak. The process will quit.
-	go func() {
-		s.log.Printf("[INFO] Awaiting for background tasks")
-		s.log.Printf("[INFO] Press CTRL+C or send SIGTERM/SIGINT to quit immediately")
-
-		forceQuitCh := make(chan os.Signal, 1)
-		signal.Notify(forceQuitCh, syscall.SIGTERM, syscall.SIGINT)
-		ch := <-forceQuitCh
-
-		s.log.Printf("[INFO] Signal caught: %s", ch.String())
-		s.log.Printf("[INFO] Quits with exit code 1")
-		os.Exit(1)
-	}()
-}
+// This is not a goroutine leak. The process will quit.
 
 // Start launches the Olric server instance and begins listening for incoming requests and termination signals.
-func (s *OlricServer) Start() error {
-	s.log.Printf("[INFO] pid: %d has been started", os.Getpid())
-	// Wait for SIGTERM or SIGINT
-	go s.waitForInterrupt()
+func (s *OlricServer) Start() error { _ = "STUB: not implemented"; return nil }
 
-	s.errGr.Go(func() error {
-		return s.db.Start()
-	})
-
-	return s.errGr.Wait()
-}
+// Wait for SIGTERM or SIGINT
 
 // Shutdown gracefully stops the Olric server instance, releasing resources and ensuring a clean termination.
-func (s *OlricServer) Shutdown(ctx context.Context) error {
-	return s.db.Shutdown(ctx)
-}
+func (s *OlricServer) Shutdown(ctx context.Context) error { _ = "STUB: not implemented"; return nil }

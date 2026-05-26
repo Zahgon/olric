@@ -15,23 +15,12 @@
 package partitions
 
 import (
-	"sync"
-
 	"github.com/olric-data/olric/internal/discovery"
 )
 
 type Kind int
 
-func (k Kind) String() string {
-	switch {
-	case k == PRIMARY:
-		return "Primary"
-	case k == BACKUP:
-		return "Backup"
-	default:
-		return "Unknown"
-	}
-}
+func (k Kind) String() string { _ = "STUB: not implemented"; return "" }
 
 const (
 	PRIMARY = Kind(iota + 1)
@@ -44,46 +33,32 @@ type Partitions struct {
 	m     map[uint64]*Partition
 }
 
-func New(count uint64, kind Kind) *Partitions {
-	ps := &Partitions{
-		kind:  kind,
-		count: count,
-		m:     make(map[uint64]*Partition),
-	}
-	for i := uint64(0); i < count; i++ {
-		ps.m[i] = &Partition{
-			id:   i,
-			kind: kind,
-			m:    &sync.Map{},
-		}
-	}
-	return ps
-}
+func New(count uint64, kind Kind) *Partitions { _ = "STUB: not implemented"; return nil }
 
 // PartitionByID returns the partition for the given HKey
 func (ps *Partitions) PartitionByID(partID uint64) *Partition {
-	return ps.m[partID]
+	_ = "STUB: not implemented"
+	return nil
+
+	// PartitionIDByHKey returns partition ID for a given HKey.
 }
 
-// PartitionIDByHKey returns partition ID for a given HKey.
-func (ps *Partitions) PartitionIDByHKey(hkey uint64) uint64 {
-	return hkey % ps.count
-}
+func (ps *Partitions) PartitionIDByHKey(hkey uint64) uint64 { _ = "STUB: not implemented"; return 0 }
 
 // PartitionByHKey returns the partition for the given HKey
 func (ps *Partitions) PartitionByHKey(hkey uint64) *Partition {
-	partID := ps.PartitionIDByHKey(hkey)
-	return ps.m[partID]
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // PartitionOwnersByHKey loads the partition owners list for a given hkey.
 func (ps *Partitions) PartitionOwnersByHKey(hkey uint64) []discovery.Member {
-	part := ps.PartitionByHKey(hkey)
-	return part.owners.Load().([]discovery.Member)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // PartitionOwnersByID loads the partition owners list for a given hkey.
 func (ps *Partitions) PartitionOwnersByID(partID uint64) []discovery.Member {
-	part := ps.PartitionByID(partID)
-	return part.owners.Load().([]discovery.Member)
+	_ = "STUB: not implemented"
+	return nil
 }

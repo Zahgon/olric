@@ -15,50 +15,9 @@
 package routingtable
 
 import (
-	"time"
-
-	"github.com/olric-data/olric/events"
 	"github.com/olric-data/olric/internal/discovery"
 )
 
-func (r *RoutingTable) publishNodeJoinEvent(m *discovery.Member) {
-	defer r.wg.Done()
+func (r *RoutingTable) publishNodeJoinEvent(m *discovery.Member) { _ = "STUB: not implemented"; return }
 
-	rc := r.client.Get(r.this.String())
-	message := events.NodeJoinEvent{
-		Kind:      events.KindNodeJoinEvent,
-		Source:    r.this.String(),
-		NodeJoin:  m.String(),
-		Timestamp: time.Now().UnixNano(),
-	}
-	data, err := message.Encode()
-	if err != nil {
-		r.log.V(3).Printf("[ERROR] Failed to encode NodeJoinEvent: %v", err)
-		return
-	}
-	err = rc.Publish(r.ctx, events.ClusterEventsChannel, data).Err()
-	if err != nil {
-		r.log.V(3).Printf("[ERROR] Failed to publish NodeJoinEvent to %s: %v", events.ClusterEventsChannel, err)
-	}
-}
-
-func (r *RoutingTable) publishNodeLeftEvent(m *discovery.Member) {
-	defer r.wg.Done()
-
-	rc := r.client.Get(r.this.String())
-	message := events.NodeLeftEvent{
-		Kind:      events.KindNodeLeftEvent,
-		Source:    r.this.String(),
-		NodeLeft:  m.String(),
-		Timestamp: time.Now().UnixNano(),
-	}
-	data, err := message.Encode()
-	if err != nil {
-		r.log.V(3).Printf("[ERROR] Failed to encode NodeLeftEvent: %v", err)
-		return
-	}
-	err = rc.Publish(r.ctx, events.ClusterEventsChannel, data).Err()
-	if err != nil {
-		r.log.V(3).Printf("[ERROR] Failed to publish NodeLeftEvent to %s: %v", events.ClusterEventsChannel, err)
-	}
-}
+func (r *RoutingTable) publishNodeLeftEvent(m *discovery.Member) { _ = "STUB: not implemented"; return }

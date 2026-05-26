@@ -16,7 +16,6 @@ package locker
 import (
 	"errors"
 	"sync"
-	"sync/atomic"
 )
 
 // ErrNoSuchLock is returned when the requested lock does not exist
@@ -37,76 +36,40 @@ type lockCtr struct {
 }
 
 // inc increments the number of waiters waiting for the lock
-func (l *lockCtr) inc() {
-	atomic.AddInt32(&l.waiters, 1)
-}
+func (l *lockCtr) inc() { _ = "STUB: not implemented"; return }
 
 // dec decrements the number of waiters waiting on the lock
-func (l *lockCtr) dec() {
-	atomic.AddInt32(&l.waiters, -1)
-}
+func (l *lockCtr) dec() { _ = "STUB: not implemented"; return }
 
 // count gets the current number of waiters
-func (l *lockCtr) count() int32 {
-	return atomic.LoadInt32(&l.waiters)
-}
+func (l *lockCtr) count() int32 { _ = "STUB: not implemented"; return 0 }
 
 // Lock locks the mutex
 func (l *lockCtr) Lock() {
-	l.mu.Lock()
+	_ = "STUB: not implemented"
+
+	// Unlock unlocks the mutex
+	return
 }
 
-// Unlock unlocks the mutex
 func (l *lockCtr) Unlock() {
-	l.mu.Unlock()
+	_ = "STUB: not implemented"
+
+	// New creates a new Locker
+	return
 }
 
-// New creates a new Locker
-func New() *Locker {
-	return &Locker{
-		locks: make(map[string]*lockCtr),
-	}
-}
+func New() *Locker { _ = "STUB: not implemented"; return nil }
 
 // Lock locks a mutex with the given name. If it doesn't exist, one is created
-func (l *Locker) Lock(name string) {
-	l.mu.Lock()
-	if l.locks == nil {
-		l.locks = make(map[string]*lockCtr)
-	}
+func (l *Locker) Lock(name string) { _ = "STUB: not implemented"; return }
 
-	nameLock, exists := l.locks[name]
-	if !exists {
-		nameLock = &lockCtr{}
-		l.locks[name] = nameLock
-	}
+// increment the nameLock waiters while inside the main mutex
+// this makes sure that the lock isn't deleted if `Lock` and `Unlock` are called concurrently
 
-	// increment the nameLock waiters while inside the main mutex
-	// this makes sure that the lock isn't deleted if `Lock` and `Unlock` are called concurrently
-	nameLock.inc()
-	l.mu.Unlock()
-
-	// Lock the nameLock outside the main mutex so we don't block other operations
-	// once locked then we can decrement the number of waiters for this lock
-	nameLock.Lock()
-	nameLock.dec()
-}
+// Lock the nameLock outside the main mutex so we don't block other operations
+// once locked then we can decrement the number of waiters for this lock
 
 // Unlock unlocks the mutex with the given name
 // If the given lock is not being waited on by any other callers, it is deleted
-func (l *Locker) Unlock(name string) error {
-	l.mu.Lock()
-	nameLock, exists := l.locks[name]
-	if !exists {
-		l.mu.Unlock()
-		return ErrNoSuchLock
-	}
-
-	if nameLock.count() == 0 {
-		delete(l.locks, name)
-	}
-	nameLock.Unlock()
-
-	l.mu.Unlock()
-	return nil
-}
+func (l *Locker) Unlock(name string) error { _ = "STUB: not implemented"; return nil }

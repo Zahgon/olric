@@ -14,25 +14,6 @@
 
 package routingtable
 
-func (r *RoutingTable) AddCallback(f func()) {
-	r.callbackMtx.Lock()
-	defer r.callbackMtx.Unlock()
+func (r *RoutingTable) AddCallback(f func()) { _ = "STUB: not implemented"; return }
 
-	r.callbacks = append(r.callbacks, f)
-}
-
-func (r *RoutingTable) runCallbacks() {
-	defer r.wg.Done()
-
-	r.callbackMtx.Lock()
-	defer r.callbackMtx.Unlock()
-
-	for _, f := range r.callbacks {
-		select {
-		case <-r.ctx.Done():
-			return
-		default:
-		}
-		f()
-	}
-}
+func (r *RoutingTable) runCallbacks() { _ = "STUB: not implemented"; return }

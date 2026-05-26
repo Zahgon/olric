@@ -25,24 +25,11 @@ type BufPool struct {
 }
 
 // New creates a new BufPool.
-func New() *BufPool {
-	return &BufPool{
-		p: sync.Pool{
-			New: func() interface{} {
-				return new(bytes.Buffer)
-			},
-		},
-	}
-}
+func New() *BufPool { _ = "STUB: not implemented"; return nil }
 
 // Put resets the buffer and puts it back to the pool.
-func (p *BufPool) Put(b *bytes.Buffer) {
-	b.Reset()
-	p.p.Put(b)
-}
+func (p *BufPool) Put(b *bytes.Buffer) { _ = "STUB: not implemented"; return }
 
 // Get returns an empty buffer from the pool. It creates a new buffer, if there
 // is no bytes.Buffer available in the pool.
-func (p *BufPool) Get() *bytes.Buffer {
-	return p.p.Get().(*bytes.Buffer)
-}
+func (p *BufPool) Get() *bytes.Buffer { _ = "STUB: not implemented"; return nil }

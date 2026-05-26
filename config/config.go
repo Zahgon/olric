@@ -15,12 +15,8 @@
 package config
 
 import (
-	"fmt"
 	"io"
 	"log"
-	"net"
-	"os"
-	"strconv"
 	"time"
 
 	"github.com/hashicorp/memberlist"
@@ -323,187 +319,18 @@ type Config struct {
 }
 
 // Validate finds errors in the current configuration.
-func (c *Config) Validate() error {
-	if c.ReplicaCount < MinimumReplicaCount {
-		return fmt.Errorf("cannot specify ReplicaCount smaller than MinimumReplicaCount")
-	}
+func (c *Config) Validate() error { _ = "STUB: not implemented"; return nil }
 
-	if c.ReadQuorum <= 0 {
-		return fmt.Errorf("cannot specify ReadQuorum less than or equal to zero")
-	}
-	if c.ReplicaCount < c.ReadQuorum {
-		return fmt.Errorf("cannot specify ReadQuorum greater than ReplicaCount")
-	}
-
-	if c.WriteQuorum <= 0 {
-		return fmt.Errorf("cannot specify WriteQuorum less than or equal to zero")
-	}
-	if c.ReplicaCount < c.WriteQuorum {
-		return fmt.Errorf("cannot specify WriteQuorum greater than ReplicaCount")
-	}
-
-	if err := c.validateMemberlistConfig(); err != nil {
-		return err
-	}
-
-	if c.MemberCountQuorum < MinimumMemberCountQuorum {
-		return fmt.Errorf("cannot specify MemberCountQuorum smaller than MinimumMemberCountQuorum")
-	}
-
-	if c.BindAddr == "" {
-		return fmt.Errorf("bindAddr cannot be empty")
-	}
-
-	if c.BindPort == 0 {
-		return fmt.Errorf("bindPort cannot be empty or zero")
-	}
-
-	// Check peers. If Peers slice contains node's itself, return an error.
-	port := strconv.Itoa(c.MemberlistConfig.BindPort)
-	this := net.JoinHostPort(c.MemberlistConfig.BindAddr, port)
-	for _, peer := range c.Peers {
-		if this == peer {
-			return fmt.Errorf("cannot be peer with itself")
-		}
-	}
-
-	if err := c.Client.Validate(); err != nil {
-		return fmt.Errorf("failed to validate client configuration: %w", err)
-	}
-
-	if err := c.DMaps.Validate(); err != nil {
-		return fmt.Errorf("failed to validate DMap configuration: %w", err)
-	}
-
-	if err := c.Authentication.Validate(); err != nil {
-		return fmt.Errorf("failed to sanitize authentication configuration: %w", err)
-	}
-
-	switch c.LogLevel {
-	case LogLevelDebug, LogLevelWarn, LogLevelInfo, LogLevelError:
-	default:
-		return fmt.Errorf("invalid LogLevel: %s", c.LogLevel)
-	}
-
-	return nil
-}
+// Check peers. If Peers slice contains node's itself, return an error.
 
 // Sanitize sets default values to empty configuration variables, if it's possible.
-func (c *Config) Sanitize() error {
-	if c.LogOutput == nil {
-		c.LogOutput = os.Stderr
-	}
+func (c *Config) Sanitize() error { _ = "STUB: not implemented"; return nil }
 
-	if c.LogLevel == "" {
-		c.LogLevel = DefaultLogLevel
-	}
+// We currently don't support ephemeral port selection. Because it needs
+// improved flow control in server initialization stage.
 
-	if c.LogVerbosity <= 0 {
-		c.LogVerbosity = DefaultLogVerbosity
-	}
-
-	if c.Logger == nil {
-		c.Logger = log.New(c.LogOutput, "", log.LstdFlags)
-	}
-
-	if c.Hasher == nil {
-		c.Hasher = hasher.NewDefaultHasher()
-	}
-
-	if c.BindAddr == "" {
-		name, err := os.Hostname()
-		if err != nil {
-			return fmt.Errorf("failed to read hostname from kernel: %w", err)
-		}
-		c.BindAddr = name
-	}
-	// We currently don't support ephemeral port selection. Because it needs
-	// improved flow control in server initialization stage.
-	if c.BindPort == 0 {
-		c.BindPort = DefaultPort
-	}
-
-	if c.LoadFactor == 0 {
-		c.LoadFactor = DefaultLoadFactor
-	}
-	if c.PartitionCount == 0 {
-		c.PartitionCount = DefaultPartitionCount
-	}
-	if c.ReplicaCount == 0 {
-		c.ReplicaCount = MinimumReplicaCount
-	}
-
-	if c.ReadQuorum == 0 {
-		c.ReadQuorum = DefaultReadQuorum
-	}
-	if c.WriteQuorum == 0 {
-		c.WriteQuorum = DefaultWriteQuorum
-	}
-
-	if c.MemberCountQuorum == 0 {
-		c.MemberCountQuorum = DefaultMemberCountQuorum
-	}
-
-	if c.MemberlistConfig == nil {
-		m := memberlist.DefaultLocalConfig()
-		// hostname is assigned to memberlist.BindAddr
-		// memberlist.Name is assigned by olric.New
-		m.BindPort = DefaultDiscoveryPort
-		m.AdvertisePort = DefaultDiscoveryPort
-		c.MemberlistConfig = m
-	}
-
-	if c.BootstrapTimeout == 0 {
-		c.BootstrapTimeout = DefaultBootstrapTimeout
-	}
-	if c.JoinRetryInterval == 0 {
-		c.JoinRetryInterval = DefaultJoinRetryInterval
-	}
-	if c.MaxJoinAttempts == 0 {
-		c.MaxJoinAttempts = DefaultMaxJoinAttempts
-	}
-	if c.LeaveTimeout == 0 {
-		c.LeaveTimeout = DefaultLeaveTimeout
-	}
-
-	if c.RoutingTablePushInterval == 0 {
-		c.RoutingTablePushInterval = DefaultRoutingTablePushInterval
-	}
-
-	if c.TriggerBalancerInterval == 0 {
-		c.TriggerBalancerInterval = DefaultTriggerBalancerInterval
-	}
-
-	if c.KeepAlivePeriod == 0 {
-		c.KeepAlivePeriod = DefaultKeepAlivePeriod
-	}
-
-	if c.Client == nil {
-		c.Client = NewClient()
-	}
-
-	if c.DMaps == nil {
-		c.DMaps = &DMaps{}
-	}
-
-	if c.Authentication == nil {
-		c.Authentication = &Authentication{}
-	}
-
-	if err := c.Authentication.Sanitize(); err != nil {
-		return fmt.Errorf("failed to sanitize authentication configuration: %w", err)
-	}
-
-	if err := c.Client.Sanitize(); err != nil {
-		return fmt.Errorf("failed to sanitize TCP client configuration: %w", err)
-	}
-
-	if err := c.DMaps.Sanitize(); err != nil {
-		return fmt.Errorf("failed to sanitize DMap configuration: %w", err)
-	}
-
-	return nil
-}
+// hostname is assigned to memberlist.BindAddr
+// memberlist.Name is assigned by olric.New
 
 // New returns a Config with sane defaults. If you change a configuration parameter,
 // please run Sanitize and Validate functions respectively.
@@ -530,38 +357,9 @@ func (c *Config) Sanitize() error {
 // DefaultWANConfig works like DefaultConfig, however it returns a configuration
 // that is optimized for most WAN environments. The default configuration is still
 // very conservative and errs on the side of caution.
-func New(env string) *Config {
-	c := &Config{
-		BindAddr:          "0.0.0.0",
-		BindPort:          DefaultPort,
-		ReadRepair:        false,
-		ReplicaCount:      1,
-		WriteQuorum:       1,
-		ReadQuorum:        1,
-		MemberCountQuorum: 1,
-		Peers:             []string{},
-		DMaps:             &DMaps{},
-		Authentication:    &Authentication{},
-	}
+func New(env string) *Config { _ = "STUB: not implemented"; return nil }
 
-	m, err := NewMemberlistConfig(env)
-	if err != nil {
-		panic(fmt.Sprintf("unable to create a new memberlist config: %v", err))
-	}
-	// memberlist.Name will be assigned by olric.New
-	m.BindPort = DefaultDiscoveryPort
-	m.AdvertisePort = DefaultDiscoveryPort
-	c.MemberlistConfig = m
-
-	if err := c.Sanitize(); err != nil {
-		panic(fmt.Sprintf("unable to sanitize Olric config: %v", err))
-	}
-
-	if err := c.Validate(); err != nil {
-		panic(fmt.Sprintf("unable to validate Olric config: %v", err))
-	}
-	return c
-}
+// memberlist.Name will be assigned by olric.New
 
 // Interface guard
 var _ IConfig = (*Config)(nil)

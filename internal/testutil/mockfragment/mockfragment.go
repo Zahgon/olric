@@ -15,9 +15,6 @@
 package mockfragment
 
 import (
-	"crypto/rand"
-	"fmt"
-	mrand "math/rand"
 	"sync"
 
 	"github.com/olric-data/olric/internal/cluster/partitions"
@@ -36,93 +33,34 @@ type MockFragment struct {
 	result map[partitions.Kind]map[uint64]Result
 }
 
-func New() *MockFragment {
-	return &MockFragment{
-		m:      make(map[string]interface{}),
-		result: make(map[partitions.Kind]map[uint64]Result),
-	}
-}
+func New() *MockFragment { _ = "STUB: not implemented"; return nil }
 
-func (f *MockFragment) Stats() storage.Stats {
-	f.Lock()
-	defer f.Unlock()
-	return storage.Stats{
-		Length: len(f.m),
-	}
-}
+func (f *MockFragment) Stats() storage.Stats { _ = "STUB: not implemented"; return *new(storage.Stats) }
 
-func (f *MockFragment) Name() string {
-	return "Mock-DMap"
-}
+func (f *MockFragment) Name() string { _ = "STUB: not implemented"; return "" }
 
-func (f *MockFragment) Put(key string, value interface{}) {
-	f.Lock()
-	defer f.Unlock()
-	f.m[key] = value
-}
+func (f *MockFragment) Put(key string, value interface{}) { _ = "STUB: not implemented"; return }
 
-func (f *MockFragment) Get(key string) interface{} {
-	f.Lock()
-	defer f.Unlock()
-	return f.m[key]
-}
+func (f *MockFragment) Get(key string) interface{} { _ = "STUB: not implemented"; return nil }
 
-func (f *MockFragment) Delete(key string) {
-	f.Lock()
-	defer f.Unlock()
-	delete(f.m, key)
-}
+func (f *MockFragment) Delete(key string) { _ = "STUB: not implemented"; return }
 
-func (f *MockFragment) Fill() {
-	n := 5
-	b := make([]byte, n)
-	randKey := func() string {
-		if _, err := rand.Read(b); err != nil {
-			panic(err)
-		}
-		return fmt.Sprintf("%X", b)
-	}
-	num := mrand.Intn(100)
-	for i := 0; i < num; i++ {
-		f.Put(randKey(), i)
-	}
-}
+func (f *MockFragment) Fill() { _ = "STUB: not implemented"; return }
 
 func (f *MockFragment) Result() map[partitions.Kind]map[uint64]Result {
-	return f.result
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (f *MockFragment) Move(part *partitions.Partition, name string, owners []discovery.Member) error {
-	f.Lock()
-	defer f.Unlock()
-
-	f.result[part.Kind()] = map[uint64]Result{
-		part.ID(): {
-			Name:   name,
-			Owners: owners,
-		},
-	}
-
-	for key := range f.m {
-		delete(f.m, key)
-	}
-
+	_ = "STUB: not implemented"
 	return nil
 }
 
-func (f *MockFragment) Compaction() (bool, error) {
-	return false, nil
-}
+func (f *MockFragment) Compaction() (bool, error) { _ = "STUB: not implemented"; return false, nil }
 
-func (f *MockFragment) Destroy() error {
-	f.Lock()
-	defer f.Unlock()
-	f.m = make(map[string]interface{})
-	return nil
-}
+func (f *MockFragment) Destroy() error { _ = "STUB: not implemented"; return nil }
 
-func (f *MockFragment) Close() error {
-	return nil
-}
+func (f *MockFragment) Close() error { _ = "STUB: not implemented"; return nil }
 
 var _ partitions.Fragment = (*MockFragment)(nil)
